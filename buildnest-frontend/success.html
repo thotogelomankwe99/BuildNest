@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>BuildNest Success</title>
+</head>
+<body>
+  <h1>Welcome to BuildNest 🎉</h1>
+  <script>
+    // Get JWT token from URL
+    const params = new URLSearchParams(window.location.search);
+    const token = params.get("token");
+
+    if (token) {
+      localStorage.setItem("buildnest_token", token);
+      document.body.innerHTML += `<p>✅ You are logged in! Token saved.</p>`;
+    } else {
+      document.body.innerHTML += `<p>❌ Login failed.</p>`;
+    }
+  </script>
+</body>
+</html>

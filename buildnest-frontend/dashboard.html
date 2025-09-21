@@ -1,0 +1,3919 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BuildNest - Collaborative Development Platform</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #e3f2fd 0%, #f3e5f5 50%, #fff3e0 100%);
+            color: #2d3748;
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+
+        /* Header */
+        .header {
+            background: linear-gradient(135deg, #1976d2, #7b1fa2);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+            padding: 1rem 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: white;
+        }
+
+        .logo-icon {
+            width: 45px;
+            height: 45px;
+            background: linear-gradient(135deg, #ff9800, #f57c00);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.3rem;
+        }
+
+        .user-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .user-profile-dropdown {
+            position: relative;
+        }
+
+        .user-profile-trigger {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            cursor: pointer;
+            padding: 0.5rem;
+            border-radius: 12px;
+            transition: all 0.3s ease;
+            background: none;
+            border: none;
+        }
+
+        .user-profile-trigger:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .user-avatar {
+            width: 45px;
+            height: 45px;
+            background: linear-gradient(135deg, #ff9800, #f57c00);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+            font-size: 1.1rem;
+        }
+
+        .user-info h3 {
+            font-size: 1rem;
+            color: white;
+            margin-bottom: 0.2rem;
+        }
+
+        .user-info p {
+            font-size: 0.85rem;
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        .dropdown-arrow {
+            color: rgba(255, 255, 255, 0.8);
+            transition: transform 0.3s ease;
+        }
+
+        .user-profile-trigger.active .dropdown-arrow {
+            transform: rotate(180deg);
+        }
+
+        .profile-dropdown {
+            position: absolute;
+            top: 100%;
+            right: 0;
+            width: 350px;
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            border: 1px solid #e2e8f0;
+            padding: 1.5rem;
+            z-index: 1000;
+            display: none;
+            animation: slideDown 0.3s ease;
+        }
+
+        .profile-dropdown.active {
+            display: block;
+        }
+
+        .profile-dropdown-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .profile-dropdown-avatar {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, #1976d2, #7b1fa2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.5rem;
+            font-weight: 600;
+        }
+
+        .profile-dropdown-info h3 {
+            font-size: 1.1rem;
+            color: #2d3748;
+            margin-bottom: 0.25rem;
+        }
+
+        .profile-dropdown-info p {
+            font-size: 0.85rem;
+            color: #718096;
+            margin-bottom: 0.25rem;
+        }
+
+        .profile-details {
+            margin-bottom: 1rem;
+            padding: 1rem;
+            background: #f8fafc;
+            border-radius: 8px;
+        }
+
+        .profile-detail-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.5rem;
+            font-size: 0.85rem;
+        }
+
+        .profile-detail-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .profile-detail-label {
+            font-weight: 500;
+            color: #4a5568;
+        }
+
+        .profile-detail-value {
+            color: #718096;
+        }
+
+        .profile-dropdown-menu {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .profile-menu-item {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.75rem;
+            border-radius: 8px;
+            text-decoration: none;
+            color: #4a5568;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            border: none;
+            background: none;
+            width: 100%;
+            text-align: left;
+        }
+
+        .profile-menu-item:hover {
+            background: #f7fafc;
+            color: #1976d2;
+        }
+
+        .profile-menu-item.logout {
+            color: #e53e3e;
+            border-top: 1px solid #e2e8f0;
+            margin-top: 0.5rem;
+            padding-top: 1rem;
+        }
+
+        .profile-menu-item.logout:hover {
+            background: #fed7d7;
+        }
+
+        .notifications {
+            position: relative;
+            background: rgba(255, 255, 255, 0.1);
+            border: none;
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            color: white;
+        }
+
+        .notifications:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .notification-badge {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            background: #ff5722;
+            color: white;
+            font-size: 0.7rem;
+            padding: 0.2rem 0.4rem;
+            border-radius: 10px;
+            min-width: 18px;
+            text-align: center;
+        }
+
+        /* Navigation Tabs */
+        .nav-tabs {
+            background: white;
+            border-bottom: 2px solid #e2e8f0;
+            padding: 0;
+        }
+
+        .nav-tabs-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            display: flex;
+            gap: 0;
+            overflow-x: auto;
+        }
+
+        .tab-button {
+            background: none;
+            border: none;
+            padding: 1.2rem 1.5rem;
+            font-size: 0.95rem;
+            font-weight: 500;
+            color: #718096;
+            cursor: pointer;
+            border-bottom: 3px solid transparent;
+            transition: all 0.3s ease;
+            position: relative;
+            white-space: nowrap;
+        }
+
+        .tab-button:hover {
+            color: #1976d2;
+            background: #f7fafc;
+        }
+
+        .tab-button.active {
+            color: #1976d2;
+            border-bottom-color: #1976d2;
+            background: #f7fafc;
+        }
+
+        /* Main Content */
+        .main-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+            min-height: calc(100vh - 200px);
+        }
+
+        .tab-content {
+            display: none;
+            animation: fadeIn 0.4s ease;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /*Project guide*/
+        .guide-title{
+            margin-bottom: 1.5rem;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .guide-steps li{
+            list-style-type: none;
+            padding:3px;
+            color: #000;
+        }
+        /* Create projects Cards */
+        .card, .guide {
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 4px 25px rgba(0, 0, 0, 0.08);
+            padding: 2rem;
+            margin-bottom: 2rem;
+            border: 1px solid #e2e8f0;
+           max-width: 100%;
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .card-title {
+            font-size: 1.4rem;
+            font-weight: 600;
+            color: #2d3748;
+        }
+
+        /* Overview Tab */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+            margin-top: 1.5rem;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 1.8rem;
+            border-radius: 16px;
+            box-shadow: 0 4px 25px rgba(0, 0, 0, 0.08);
+            border-left: 4px solid;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 35px rgba(0, 0, 0, 0.12);
+        }
+
+        .stat-card:nth-child(1) { border-left-color: #1976d2; }
+        .stat-card:nth-child(2) { border-left-color: #7b1fa2; }
+        .stat-card:nth-child(3) { border-left-color: #ff9800; }
+        .stat-card:nth-child(4) { border-left-color: #4caf50; }
+
+        .stat-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .stat-title {
+            color: #718096;
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        .stat-icon {
+            width: 45px;
+            height: 45px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.3rem;
+        }
+
+        .stat-card:nth-child(1) .stat-icon {
+            background: linear-gradient(135deg, #1976d2, #1565c0);
+            color: white;
+        }
+
+        .stat-card:nth-child(2) .stat-icon {
+            background: linear-gradient(135deg, #7b1fa2, #6a1b9a);
+            color: white;
+        }
+
+        .stat-card:nth-child(3) .stat-icon {
+            background: linear-gradient(135deg, #ff9800, #f57c00);
+            color: white;
+        }
+
+        .stat-card:nth-child(4) .stat-icon {
+            background: linear-gradient(135deg, #4caf50, #388e3c);
+            color: white;
+        }
+
+        .stat-value {
+            font-size: 2.2rem;
+            font-weight: 700;
+            color: #2d3748;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-change {
+            font-size: 0.85rem;
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+        }
+
+        .stat-change.positive { color: #4caf50; }
+        .stat-change.negative { color: #f44336; }
+
+        /* Activity Items */
+        .activity-item {
+            background: white;
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+            box-shadow: 0 2px 15px rgba(0, 0, 0, 0.05);
+            border: 1px solid #e2e8f0;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .activity-item:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            border-color: #1976d2;
+        }
+
+        .activity-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .activity-project {
+            font-weight: 600;
+            color: #2d3748;
+        }
+
+        .activity-status {
+            padding: 0.4rem 0.8rem;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+
+        .status-pending {
+            background: #fff3e0;
+            color: #e65100;
+        }
+
+        .status-accepted {
+            background: #e8f5e8;
+            color: #2e7d32;
+        }
+
+        .status-rejected {
+            background: #ffebee;
+            color: #c62828;
+        }
+
+        .status-new {
+            background: #e3f2fd;
+            color: #1565c0;
+        }
+
+        /* Forms */
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            color: #2d3748;
+        }
+
+        .form-input,
+        .form-textarea,
+        .form-select {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 0.95rem;
+            transition: all 0.3s ease;
+        }
+
+        .form-input:focus,
+        .form-textarea:focus,
+        .form-select:focus {
+            outline: none;
+            border-color: #1976d2;
+            box-shadow: 0 0 0 3px rgba(25, 118, 210, 0.1);
+        }
+
+        .form-textarea {
+            resize: vertical;
+            min-height: 120px;
+        }
+
+        /* Buttons */
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 8px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.1s ease;
+            text-decoration: none;
+            display: inline-block;
+            text-align: center;
+            font-size: 0.95rem;
+            user-select: none;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            outline: none;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn:active {
+            transform: scale(0.98);
+        }
+
+        .btn:focus {
+            outline: 2px solid #1976d2;
+            outline-offset: 2px;
+        }
+
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none !important;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #1976d2, #1565c0);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(25, 118, 210, 0.3);
+        }
+
+        .btn-secondary {
+            background: #2758d4;
+            color: #f5f7fa;
+        }
+
+        .btn-secondary:hover {
+            background: #91b7e0;
+        }
+
+        .btn-success {
+            background: #4caf50;
+            color: white;
+        }
+
+        .btn-danger {
+            background: #f44336;
+            color: white;
+        }
+
+        .btn-orange {
+            background: linear-gradient(135deg, #ff9800, #f57c00);
+            color: white;
+        }
+
+        .btn-orange:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(255, 152, 0, 0.3);
+        }
+
+        /* Skill Level Filters */
+        .skill-level-filters {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .skill-filter {
+            padding: 0.75rem 1.5rem;
+            border: 2px solid #e2e8f0;
+            border-radius: 25px;
+            background: white;
+            color: #4a5568;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+
+        .skill-filter:hover {
+            border-color: #1976d2;
+            color: #1976d2;
+        }
+
+        .skill-filter.active {
+            background: linear-gradient(135deg, #1976d2, #1565c0);
+            color: white;
+            border-color: transparent;
+        }
+
+        /* Field Filters */
+        .field-filters {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .field-filter {
+            padding: 0.5rem 1rem;
+            border: 2px solid #e2e8f0;
+            border-radius: 20px;
+            background: white;
+            color: #4a5568;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.85rem;
+        }
+
+        .field-filter:hover {
+            border-color: #7b1fa2;
+            color: #7b1fa2;
+        }
+
+        .field-filter.active {
+            background: linear-gradient(135deg, #7b1fa2, #6a1b9a);
+            color: white;
+            border-color: transparent;
+        }
+
+        /* Dropdown Filters */
+        .dropdown-filters {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .dropdown-filter {
+            min-width: 200px;
+        }
+
+        /* Skill Level Badges */
+        .skill-level {
+            padding: 0.4rem 0.8rem;
+            border-radius: 15px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .level-beginner {
+            background: #e8f5e8;
+            color: #2e7d32;
+            border: 1px solid #4caf50;
+        }
+
+        .level-intermediate {
+            background: #fff3e0;
+            color: #e65100;
+            border: 1px solid #ff9800;
+        }
+
+        .level-advanced {
+            background: #ffebee;
+            color: #c62828;
+            border: 1px solid #f44336;
+        }
+
+        /* Project Cards */
+        .projects-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 1.5rem;
+            margin-top: 1.5rem;
+        }
+
+        .project-card {
+            background: white;
+            border-radius: 16px;
+            padding: 1.5rem;
+            box-shadow: 0 4px 25px rgba(0, 0, 0, 0.08);
+            border: 1px solid #e2e8f0;
+            transition: all 0.3s ease;
+        }
+
+        .project-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 35px rgba(0, 0, 0, 0.12);
+        }
+
+        .project-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 1rem;
+        }
+
+        .project-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #2d3748;
+            margin-bottom: 0.5rem;
+        }
+
+        .project-badges {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            align-items: flex-end;
+        }
+
+        .project-type {
+            padding: 0.3rem 0.8rem;
+            border-radius: 15px;
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+
+        .type-solo {
+            background: #e3f2fd;
+            color: #1565c0;
+        }
+
+        .type-group {
+            background: #f3e5f5;
+            color: #6a1b9a;
+        }
+
+        .project-field {
+            padding: 0.3rem 0.8rem;
+            border-radius: 15px;
+            font-size: 0.75rem;
+            font-weight: 500;
+            background: #fff3e0;
+            color: #e65100;
+        }
+
+        .project-description {
+            color: #718096;
+            margin-bottom: 1rem;
+            line-height: 1.6;
+        }
+
+        .project-tech {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .tech-badge {
+            padding: 0.3rem 0.7rem;
+            background: #f7fafc;
+            color: #4a5568;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            border: 1px solid #e2e8f0;
+        }
+
+        .project-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-top: 1rem;
+            border-top: 1px solid #e2e8f0;
+        }
+
+        .project-author {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.85rem;
+            color: #718096;
+            cursor: pointer;
+        }
+
+        .author-avatar {
+            width: 30px;
+            height: 30px;
+            background: linear-gradient(135deg, #1976d2, #7b1fa2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        /* NEW STYLES FOR IMPROVEMENTS */
+        .applicant-count {
+            font-size: 0.85rem;
+            color: #718096;
+            margin-top: 0.5rem;
+        }
+        
+        .applicant-count span {
+            font-weight: 600;
+            color: #1976d2;
+        }
+        
+        .private-profile-notice {
+            background: #fff3e0;
+            border: 1px solid #ff9800;
+            border-radius: 8px;
+            padding: 1.5rem;
+            text-align: center;
+            margin: 2rem 0;
+        }
+        
+        .submission-form {
+            margin-top: 1.5rem;
+        }
+        
+        .submission-preview {
+            background: #f8fafc;
+            border-radius: 8px;
+            padding: 1rem;
+            margin: 1rem 0;
+        }
+        
+        .review-actions {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+
+        /* Submission and Review Cards */
+        .submission-item, .review-item {
+            background: white;
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+            box-shadow: 0 2px 15px rgba(0, 0, 0, 0.05);
+            border: 1px solid #e2e8f0;
+            transition: all 0.3s ease;
+        }
+
+        .submission-item:hover, .review-item:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .submission-header, .review-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .submission-title, .review-title {
+            font-weight: 600;
+            color: #2d3748;
+            font-size: 1.1rem;
+        }
+
+        .submission-meta, .review-meta {
+            font-size: 0.85rem;
+            color: #718096;
+        }
+
+        /* Community */
+        .community-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 2rem;
+            margin-top: 1.5rem;
+        }
+
+        .discussion-item {
+            background: white;
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+            box-shadow: 0 2px 15px rgba(0, 0, 0, 0.05);
+            border: 1px solid #e2e8f0;
+        }
+
+        .discussion-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .discussion-title {
+            font-weight: 600;
+            color: #2d3748;
+            font-size: 1.1rem;
+        }
+
+        .discussion-meta {
+            font-size: 0.85rem;
+            color: #718096;
+        }
+
+        .discussion-content {
+            color: #4a5568;
+            line-height: 1.6;
+            margin-bottom: 1rem;
+        }
+
+        .discussion-actions {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        .discussion-stats {
+            display: flex;
+            gap: 1rem;
+            font-size: 0.85rem;
+            color: #718096;
+        }
+
+        .comment-item {
+            background: #f8fafc;
+            border-radius: 8px;
+            padding: 1rem;
+            margin: 0.5rem 0;
+            border-left: 3px solid #1976d2;
+        }
+
+        .comment-author {
+            font-weight: 500;
+            color: #2d3748;
+            margin-bottom: 0.5rem;
+        }
+
+        .comment-content {
+            color: #4a5568;
+            line-height: 1.5;
+        }
+
+        .active-members {
+            background: white;
+            border-radius: 16px;
+            padding: 1.5rem;
+            box-shadow: 0 4px 25px rgba(0, 0, 0, 0.08);
+            border: 1px solid #e2e8f0;
+            height: fit-content;
+        }
+
+        .member-item {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+            transition: all 0.3s ease;
+            border: 1px solid #e2e8f0;
+           box-shadow: 0 4px 25px rgba(0, 0, 0, 0.01);
+        }
+
+        .member-item:hover {
+            background: #f8fafc;
+        }
+
+        .member-avatar {
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, #1976d2, #7b1fa2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .member-info h4 {
+            color: #2d3748;
+            margin-bottom: 0.25rem;
+            cursor: pointer;
+        }
+
+        .member-info p {
+            font-size: 0.85rem;
+            color: #718096;
+        }
+
+        /* Messages */
+        .message-item {
+            background: white;
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+            box-shadow: 0 2px 15px rgba(0, 0, 0, 0.05);
+            border: 1px solid #e2e8f0;
+        }
+
+        .message-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .message-sender {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            cursor: pointer;
+        }
+
+        .sender-avatar {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, #1976d2, #7b1fa2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+        }
+
+        .message-time {
+            font-size: 0.85rem;
+            color: #718096;
+        }
+
+        .message-content {
+            color: #4a5568;
+            line-height: 1.6;
+            margin-bottom: 1rem;
+        }
+
+        .message-actions {
+            display: flex;
+            gap: 0.75rem;
+        }
+
+        /* Portfolio */
+        .portfolio-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-top: 1.5rem;
+        }
+
+        .portfolio-item {
+            background: white;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 4px 25px rgba(0, 0, 0, 0.08);
+            border: 1px solid #e2e8f0;
+            transition: all 0.3s ease;
+        }
+
+        .portfolio-item:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 35px rgba(0, 0, 0, 0.12);
+        }
+
+        .portfolio-image {
+            width: 100%;
+            height: 200px;
+            background: linear-gradient(135deg, #1976d2, #7b1fa2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 3rem;
+        }
+
+        .portfolio-content {
+            padding: 1.5rem;
+        }
+
+        .portfolio-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #2d3748;
+            margin-bottom: 0.5rem;
+        }
+
+        .portfolio-description {
+            color: #718096;
+            margin-bottom: 1rem;
+            line-height: 1.6;
+        }
+
+        .portfolio-links {
+            display: flex;
+            gap: 0.75rem;
+        }
+
+        .portfolio-link {
+            padding: 0.5rem 1rem;
+            background: #f7fafc;
+            color: #4a5568;
+            text-decoration: none;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            transition: all 0.3s ease;
+        }
+
+        .portfolio-link:hover {
+            background: #edf2f7;
+            color: #1976d2;
+        }
+
+        /* Modal */
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 10000;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 16px;
+            padding: 2rem;
+            max-width: 600px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .modal-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: #2d3748;
+            margin-bottom: 0.5rem;
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            color: #718096;
+            cursor: pointer;
+            padding: 0.5rem;
+            border-radius: 50%;
+            transition: all 0.3s ease;
+        }
+
+        .modal-close:hover {
+            background: #f7fafc;
+            color: #2d3748;
+        }
+
+        /* Footer */
+        .footer {
+            background: linear-gradient(135deg, #1976d2, #7b1fa2);
+            color: white;
+            padding: 3rem 0 1rem;
+            margin-top: 4rem;
+        }
+
+        .footer-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            display: none; /* Hide footer on pages */
+        }
+
+        .footer-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .footer-section h3 {
+            margin-bottom: 1rem;
+            color: white;
+        }
+
+        .footer-section p,
+        .footer-section a {
+            color: rgba(255, 255, 255, 0.8);
+            text-decoration: none;
+            line-height: 1.6;
+        }
+
+        .footer-section a:hover {
+            color: white;
+        }
+
+        .footer-bottom {
+            text-align: center;
+            padding-top: 2rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.2);
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        /* NEW STYLES FOR PAGES */
+        .page {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: white;
+            z-index: 1000;
+            overflow-y: auto;
+            padding: 2rem;
+        }
+
+        .page.active {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .page-title {
+            font-size: 1.8rem;
+            font-weight: 600;
+            color: #2d3748;
+        }
+
+        .page-content {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .back-button {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            background: #f7fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            color: #4a5568;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .back-button:hover {
+            background: #edf2f7;
+            color: #2d3748;
+        }
+
+        /* Chat Interface */
+        .chat-container {
+            display: flex;
+            flex-direction: column;
+            height: 500px;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        .chat-header {
+            padding: 1rem;
+            background: #f7fafc;
+            border-bottom: 1px solid #e2e8f0;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .chat-messages {
+            flex: 1;
+            padding: 1rem;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .message {
+            max-width: 70%;
+            padding: 0.75rem 1rem;
+            border-radius: 18px;
+            position: relative;
+        }
+
+        .message.received {
+            align-self: flex-start;
+            background: #f1f5f9;
+            color: #334155;
+            border: 1px solid #e2e8f0;
+        }
+
+        .message.sent {
+            align-self: flex-end;
+            background: #3b82f6;
+            color: white;
+        }
+
+        .message-time {
+            font-size: 0.7rem;
+            margin-top: 0.25rem;
+            opacity: 0.7;
+        }
+
+        .chat-input {
+            display: flex;
+            padding: 1rem;
+            border-top: 1px solid #e2e8f0;
+            background: #f7fafc;
+        }
+
+        .chat-input input {
+            flex: 1;
+            padding: 0.75rem 1rem;
+            border: 1px solid #e2e8f0;
+            border-radius: 20px;
+            outline: none;
+        }
+
+        .chat-input button {
+            margin-left: 0.5rem;
+            padding: 0.75rem 1.5rem;
+            background: #3b82f6;
+            color: white;
+            border: none;
+            border-radius: 20px;
+            cursor: pointer;
+        }
+
+        /* Comment Section */
+        .comment-section {
+            margin-top: 1.5rem;
+            border-top: 1px solid #e2e8f0;
+            padding-top: 1.5rem;
+        }
+
+        .comment-form {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .header-content {
+                padding: 0 1rem;
+            }
+
+            .nav-tabs-content {
+                padding: 0 1rem;
+            }
+
+            .tab-button {
+                padding: 1rem 1.2rem;
+            }
+
+            .main-content {
+                padding: 1rem;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .projects-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .portfolio-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .community-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .skill-level-filters,
+            .field-filters {
+                justify-content: center;
+            }
+
+            .profile-dropdown {
+                width: 280px;
+                right: -20px;
+            }
+
+            .page {
+                padding: 1rem;
+            }
+
+            .dropdown-filters {
+                flex-direction: column;
+            }
+
+            .dropdown-filter {
+                width: 100%;
+            }
+            
+            .review-actions {
+                flex-direction: column;
+            }
+            
+            .message-actions {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+        }
+
+        /* Animations */
+        @keyframes slideDown {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        /* Utility Classes */
+        .text-center { text-align: center; }
+        .mt-1 { margin-top: 0.5rem; }
+        .mt-2 { margin-top: 1rem; }
+        .mt-3 { margin-top: 1.5rem; }
+        .mb-1 { margin-bottom: 0.5rem; }
+        .mb-2 { margin-bottom: 1rem; }
+        .mb-3 { margin-bottom: 1.5rem; }
+        .p-2 { padding: 1rem; }
+        .p-3 { padding: 1.5rem; }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="header-content">
+            <div class="logo">
+                <div class="logo-icon">BN</div>
+                <span>BuildNest</span>
+            </div>
+            <div class="user-header">
+                <button class="notifications" id="notifications-btn">
+                    <i class="icon">🔔</i>
+                    <span class="notification-badge">3</span>
+                </button>
+                <div class="user-profile-dropdown">
+                    <button class="user-profile-trigger">
+                        <div class="user-avatar">JD</div>
+                        <div class="user-info">
+                            <h3>John Doe</h3>
+                            <p>UI/UX Designer</p>
+                        </div>
+                        <span class="dropdown-arrow">▼</span>
+                    </button>
+                    <div class="profile-dropdown">
+                        <div class="profile-dropdown-header">
+                            <div class="profile-dropdown-avatar">JD</div>
+                            <div class="profile-dropdown-info">
+                                <h3>John Doe</h3>
+                                <p>UI/UX Designer</p>
+                                <p>San Francisco, CA</p>
+                            </div>
+                        </div>
+                        <div class="profile-details">
+                            <div class="profile-detail-item">
+                                <span class="profile-detail-label">Experience:</span>
+                                <span class="profile-detail-value">5 years</span>
+                            </div>
+                            <div class="profile-detail-item">
+                                <span class="profile-detail-label">Projects:</span>
+                                <span class="profile-detail-value">12 completed</span>
+                            </div>
+                            <div class="profile-detail-item">
+                                <span class="profile-detail-label">Rating:</span>
+                                <span class="profile-detail-value">4.8/5.0</span>
+                            </div>
+                        </div>
+                        <div class="profile-dropdown-menu">
+                            <button class="profile-menu-item" id="view-profile-btn">
+                                <i class="icon">👤</i>
+                                <span>View Profile</span>
+                            </button>
+                            <button class="profile-menu-item" id="edit-profile-btn">
+                                <i class="icon">✏️</i>
+                                <span>Edit Profile</span>
+                            </button>
+                            <button class="profile-menu-item" id="settings-btn">
+                                <i class="icon">⚙️</i>
+                                <span>Settings</span>
+                            </button>
+                            <button class="profile-menu-item logout">
+                                <i class="icon">🚪</i>
+                                <span>Logout</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Navigation Tabs -->
+    <nav class="nav-tabs">
+        <div class="nav-tabs-content">
+            <button class="tab-button active" data-tab="overview">Overview</button>
+            <button class="tab-button" data-tab="find-projects">Find Projects</button>
+            <button class="tab-button" data-tab="create-project">Create Project</button>
+            <button class="tab-button" data-tab="submissions">Submissions & Reviews</button>
+            <button class="tab-button" data-tab="applications">Applications</button>
+            <button class="tab-button" data-tab="community">Community</button>
+            <button class="tab-button" data-tab="messages">Messages</button>
+            <button class="tab-button" data-tab="portfolio">Portfolio</button>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Overview Tab -->
+        <div class="tab-content active" id="overview">
+            <h1 class="card-title">Dashboard Overview</h1>
+            <div class="stats-grid">
+                <div class="stat-card" id="active-projects-stat">
+                    <div class="stat-header">
+                        <div class="stat-title">Active Projects</div>
+                        <div class="stat-icon">📊</div>
+                    </div>
+                    <div class="stat-value">5</div>
+                    <div class="stat-change positive">↑ 2 from last month</div>
+                </div>
+                <div class="stat-card" id="applications-sent-stat">
+                    <div class="stat-header">
+                        <div class="stat-title">Applications Sent</div>
+                        <div class="stat-icon">📝</div>
+                    </div>
+                    <div class="stat-value">12</div>
+                    <div class="stat-change positive">↑ 4 from last month</div>
+                </div>
+                <div class="stat-card" id="connections-stat">
+                    <div class="stat-header">
+                        <div class="stat-title">Connections</div>
+                        <div class="stat-icon">👥</div>
+                    </div>
+                    <div class="stat-value">47</div>
+                    <div class="stat-change positive">↑ 8 from last month</div>
+                </div>
+                <div class="stat-card" id="community-posts-stat">
+                    <div class="stat-header">
+                        <div class="stat-title">Community Posts</div>
+                        <div class="stat-icon">💬</div>
+                    </div>
+                    <div class="stat-value">18</div>
+                    <div class="stat-change positive">↑ 5 from last month</div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title">Recent Activity</h2>
+                </div>
+                <div class="activity-item" id="activity-1">
+                    <div class="activity-header">
+                        <div class="activity-project">E-commerce Website Redesign</div>
+                        <div class="activity-status status-pending">Pending Review</div>
+                    </div>
+                    <p>Your application was sent 2 days ago. The project owner is reviewing applications.</p>
+                </div>
+                <div class="activity-item" id="activity-2">
+                    <div class="activity-header">
+                        <div class="activity-project">Mobile App Development</div>
+                        <div class="activity-status status-accepted">Accepted</div>
+                    </div>
+                    <p>Congratulations! Your application was accepted. Project kickoff meeting scheduled for tomorrow.</p>
+                </div>
+                <div class="activity-item" id="activity-3">
+                    <div class="activity-header">
+                        <div class="activity-project">Data Visualization Dashboard</div>
+                        <div class="activity-status status-rejected">Not Selected</div>
+                    </div>
+                    <p>Thank you for your application. Unfortunately, another candidate was selected for this project.</p>
+                </div>
+                <div class="activity-item" id="activity-4">
+                    <div class="activity-header">
+                        <div class="activity-project">New Connection Request</div>
+                        <div class="activity-status status-new">New</div>
+                    </div>
+                    <p>Sarah Johnson sent you a connection request. Accept to connect and collaborate.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Create Project Tab -->
+        <div class="tab-content" id="create-project">
+            <div class="guide">
+                <h2 class="guide-title">How to Create a Successful Project Listing</h2>
+                <ul class="guide-steps">
+                    <li>1. Provide a clear and concise project title.</li>
+                    <li>2. Write a detailed description outlining the project goals, technologies used, and expected outcomes.</li>
+                    <li>3. Specify the required skill level to attract suitable collaborators.</li>
+                    <li>4. Choose the appropriate field to categorize your project effectively.</li>
+                    <li>5. Indicate whether you're looking for solo help or team members.</li>
+                    <li>6. Set a realistic timeline and time commitment expectations.</li>
+                    <li>7. List any specific skills or experience required for the project.</li>
+                </ul>
+                <p style="color: #4a5568; font-size: 0.9rem;">Following these steps will help you create an appealing project listing that attracts the right collaborators!</p>    
+            </div>
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title">Create New Project</h2>
+                </div>
+                
+                <form id="createProjectForm">
+                    <div class="form-group">
+                        <label class="form-label">Project Title</label>
+                        <input type="text" class="form-input" placeholder="Enter project title" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Project Description</label>
+                        <textarea class="form-textarea" placeholder="Describe your project in detail..." required></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Skill Level</label>
+                        <select class="form-select" required>
+                            <option value="">Select skill level</option>
+                            <option value="beginner">Beginner - Perfect for students and new developers</option>
+                            <option value="intermediate">Intermediate - For developers with some experience</option>
+                            <option value="advanced">Advanced - For experienced developers</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Field</label>
+                        <select class="form-select" required>
+                            <option value="">Select field</option>
+                            <option value="web-development">Web Development</option>
+                            <option value="mobile-development">Mobile Development</option>
+                            <option value="data-science">Data Science</option>
+                            <option value="ai-ml">AI/Machine Learning</option>
+                            <option value="blockchain">Blockchain</option>
+                            <option value="game-development">Game Development</option>
+                            <option value="devops">DevOps</option>
+                            <option value="cybersecurity">Cybersecurity</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Collaboration Type</label>
+                        <select class="form-select" id="collaborationType" required onchange="toggleTeamSize()">
+                            <option value="">Select collaboration type</option>
+                            <option value="solo">Solo (I need help with my project)</option>
+                            <option value="group">Group (Looking for team members)</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group" id="teamSizeGroup" style="display: none;">
+                        <label class="form-label">Team Size</label>
+                        <select class="form-select">
+                            <option value="">Select team size</option>
+                            <option value="2-3">2-3 members</option>
+                            <option value="4-5">4-5 members</option>
+                            <option value="6-8">6-8 members</option>
+                            <option value="8+">8+ members</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Project Timeline</label>
+                        <select class="form-select" required>
+                            <option value="">Select timeline</option>
+                            <option value="1-2 weeks">1-2 weeks</option>
+                            <option value="1 month">1 month</option>
+                            <option value="2-3 months">2-3 months</option>
+                            <option value="3-6 months">3-6 months</option>
+                            <option value="6+ months">6+ months</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Preferred Tech Stack</label>
+                        <input type="text" class="form-input" placeholder="e.g., React, Node.js, MongoDB" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Time Commitment</label>
+                        <select class="form-select" required>
+                            <option value="">Select time commitment</option>
+                            <option value="5-10 hours/week">5-10 hours/week</option>
+                            <option value="10-15 hours/week">10-15 hours/week</option>
+                            <option value="15-20 hours/week">15-20 hours/week</option>
+                            <option value="20+ hours/week">20+ hours/week</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Additional Requirements</label>
+                        <textarea class="form-textarea" placeholder="Any specific skills, experience level, or other requirements..."></textarea>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary">Create Project</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Submissions & Reviews Tab -->
+        <div class="tab-content" id="submissions">
+            <h1 class="card-title">Project Submissions & Reviews</h1>
+            <p style="color: #718096; margin-bottom: 2rem;">Submit your completed work for review and manage project submissions.</p>
+            
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title">My Completed Work Submissions</h2>
+                </div>
+                
+                <div class="submission-item">
+                    <div class="submission-header">
+                        <h3 class="submission-title">E-commerce Website Redesign</h3>
+                        <div class="activity-status status-pending">Under Review</div>
+                    </div>
+                    <div class="submission-meta">
+                        <p><strong>Submitted on:</strong> October 20, 2023</p>
+                        <p><strong>Project Owner:</strong> Michael Johnson</p>
+                        <p><strong>Repository:</strong> <a href="#" style="color: #1976d2;">github.com/johndoe/ecommerce-redesign</a></p>
+                        <p><strong>Live Demo:</strong> <a href="#" style="color: #1976d2;">ecommerce-demo.com</a></p>
+                    </div>
+                    <p>Submitted the complete redesign of the product pages and checkout flow. All requirements have been implemented and tested.</p>
+                    <div class="message-actions">
+                        <button class="btn btn-primary view-submission-details-btn" data-submission="E-commerce Website Redesign">View Submission Details</button>
+                        <button class="btn btn-secondary contact-owner-btn" data-user="Michael Johnson">Contact Owner</button>
+                    </div>
+                </div>
+                
+                <div class="submission-item">
+                    <div class="submission-header">
+                        <h3 class="submission-title">Mobile App Development</h3>
+                        <div class="activity-status status-accepted">Approved</div>
+                    </div>
+                    <div class="submission-meta">
+                        <p><strong>Submitted on:</strong> October 15, 2023</p>
+                        <p><strong>Approved on:</strong> October 18, 2023</p>
+                        <p><strong>Repository:</strong> <a href="#" style="color: #1976d2;">github.com/johndoe/fitness-app</a></p>
+                        <p><strong>Live Demo:</strong> <a href="#" style="color: #1976d2;">fitness-app-demo.com</a></p>
+                    </div>
+                    <p>Completed the fitness tracking functionality with personalized recommendations. Project has been approved and can be added to portfolio.</p>
+                    <div class="message-actions">
+                        <button class="btn btn-primary view-submission-details-btn" data-submission="Mobile App Development">View Submission Details</button>
+                        <button class="btn btn-success">Add to Portfolio</button>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title">Submissions to Review (As Project Owner)</h2>
+                </div>
+                
+                <div class="review-item">
+                    <div class="review-header">
+                        <h3 class="review-title">Data Visualization Dashboard</h3>
+                        <div class="activity-status status-new">New Submission</div>
+                    </div>
+                    <div class="review-meta">
+                        <p><strong>Submitted by:</strong> Alex Chen</p>
+                        <p><strong>Submitted on:</strong> October 22, 2023</p>
+                        <p><strong>Repository:</strong> <a href="#" style="color: #1976d2;">github.com/alexchen/dashboard-viz</a></p>
+                        <p><strong>Live Demo:</strong> <a href="#" style="color: #1976d2;">dashboard-demo.com</a></p>
+                    </div>
+                    <p>Alex has submitted the interactive charts module for review. All core functionality has been implemented according to specifications.</p>
+                    <div class="message-actions">
+                        <button class="btn btn-primary review-submission-btn" data-submission="Data Visualization Dashboard" data-submitter="Alex Chen">Review Submission</button>
+                        <button class="btn btn-secondary contact-applicant-btn" data-user="Alex Chen">Contact Collaborator</button>
+                    </div>
+                </div>
+                
+                <div class="review-item">
+                    <div class="review-header">
+                        <h3 class="review-title">UI/UX Design for FinTech App</h3>
+                        <div class="activity-status status-pending">Revisions Requested</div>
+                    </div>
+                    <div class="review-meta">
+                        <p><strong>Submitted by:</strong> Maria Rodriguez</p>
+                        <p><strong>Submitted on:</strong> October 18, 2023</p>
+                        <p><strong>Repository:</strong> <a href="#" style="color: #1976d2;">github.com/mariarodriguez/fintech-ui</a></p>
+                        <p><strong>Design Files:</strong> <a href="#" style="color: #1976d2;">figma.com/fintech-designs</a></p>
+                    </div>
+                    <p>Requested revisions to the onboarding flow and dashboard design. Updated designs have been submitted for re-review.</p>
+                    <div class="message-actions">
+                        <button class="btn btn-primary review-submission-btn" data-submission="UI/UX Design for FinTech App" data-submitter="Maria Rodriguez">Review Updated Submission</button>
+                        <button class="btn btn-secondary" data-user="Maria Rodriguez">Contact Designer</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Find Projects Tab -->
+        <div class="tab-content" id="find-projects">
+            <h1 class="card-title">Find Projects</h1>
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title">Filter Projects</h2>
+                </div>
+                <div class="dropdown-filters">
+                    <div class="form-group dropdown-filter">
+                        <label class="form-label">Project Type</label>
+                        <select class="form-select" id="project-type-filter">
+                            <option value="all">All Types</option>
+                            <option value="solo">Solo Projects</option>
+                            <option value="group">Group Projects</option>
+                        </select>
+                    </div>
+                    <div class="form-group dropdown-filter">
+                        <label class="form-label">Skill Level</label>
+                        <select class="form-select" id="skill-level-filter">
+                            <option value="all">All Levels</option>
+                            <option value="beginner">Beginner</option>
+                            <option value="intermediate">Intermediate</option>
+                            <option value="advanced">Advanced</option>
+                        </select>
+                    </div>
+                    <div class="form-group dropdown-filter">
+                        <label class="form-label">Field</label>
+                        <select class="form-select" id="field-filter">
+                            <option value="all">All Fields</option>
+                            <option value="web">Web Development</option>
+                            <option value="mobile">Mobile Development</option>
+                            <option value="design">UI/UX Design</option>
+                            <option value="data">Data Science</option>
+                            <option value="ai">AI/ML</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <div class="projects-grid">
+                <div class="project-card" data-type="group" data-level="intermediate" data-field="web">
+                    <div class="project-header">
+                        <h3 class="project-title">E-commerce Website Redesign</h3>
+                        <div class="project-badges">
+                            <span class="project-type type-group">Group Project</span>
+                            <span class="skill-level level-intermediate">Intermediate</span>
+                        </div>
+                    </div>
+                    <p class="project-description">Redesign an existing e-commerce website to improve user experience and increase conversion rates.</p>
+                    <div class="project-tech">
+                        <span class="tech-badge">React</span>
+                        <span class="tech-badge">Node.js</span>
+                        <span class="tech-badge">MongoDB</span>
+                        <span class="tech-badge">Figma</span>
+                    </div>
+                    <div class="project-footer">
+                        <div class="project-author" data-user="michael-johnson">
+                            <div class="author-avatar">MJ</div>
+                            <span>Michael Johnson</span>
+                        </div>
+                        <button class="btn btn-primary apply-btn" data-project="E-commerce Website Redesign">Apply</button>
+                    </div>
+                </div>
+
+                <div class="project-card" data-type="solo" data-level="advanced" data-field="mobile">
+                    <div class="project-header">
+                        <h3 class="project-title">Mobile App Development</h3>
+                        <div class="project-badges">
+                            <span class="project-type type-solo">Solo Project</span>
+                            <span class="skill-level level-advanced">Advanced</span>
+                        </div>
+                    </div>
+                    <p class="project-description">Develop a fitness tracking mobile app with personalized workout plans and progress analytics.</p>
+                    <div class="project-tech">
+                        <span class="tech-badge">React Native</span>
+                        <span class="tech-badge">Firebase</span>
+                        <span class="tech-badge">Redux</span>
+                    </div>
+                    <div class="project-footer">
+                        <div class="project-author" data-user="sarah-lee">
+                            <div class="author-avatar">SL</div>
+                            <span>Sarah Lee</span>
+                        </div>
+                        <button class="btn btn-primary apply-btn" data-project="Mobile App Development">Apply</button>
+                    </div>
+                </div>
+
+                <div class="project-card" data-type="group" data-level="beginner" data-field="data">
+                    <div class="project-header">
+                        <h3 class="project-title">Data Visualization Dashboard</h3>
+                        <div class="project-badges">
+                            <span class="project-type type-group">Group Project</span>
+                            <span class="skill-level level-beginner">Beginner</span>
+                        </div>
+                    </div>
+                    <p class="project-description">Create an interactive dashboard for visualizing sales data with various chart types and filters.</p>
+                    <div class="project-tech">
+                        <span class="tech-badge">JavaScript</span>
+                        <span class="tech-badge">D3.js</span>
+                        <span class="tech-badge">Python</span>
+                        <span class="tech-badge">Flask</span>
+                    </div>
+                    <div class="project-footer">
+                        <div class="project-author" data-user="robert-kim">
+                            <div class="author-avatar">RK</div>
+                            <span>Robert Kim</span>
+                        </div>
+                        <button class="btn btn-primary apply-btn" data-project="Data Visualization Dashboard">Apply</button>
+                    </div>
+                </div>
+
+                <div class="project-card" data-type="solo" data-level="intermediate" data-field="design">
+                    <div class="project-header">
+                        <h3 class="project-title">UI/UX Design for FinTech App</h3>
+                        <div class="project-badges">
+                            <span class="project-type type-solo">Solo Project</span>
+                            <span class="skill-level level-intermediate">Intermediate</span>
+                        </div>
+                    </div>
+                    <p class="project-description">Design a modern and user-friendly interface for a financial technology mobile application.</p>
+                    <div class="project-tech">
+                        <span class="tech-badge">Figma</span>
+                        <span class="tech-badge">Adobe XD</span>
+                        <span class="tech-badge">Illustrator</span>
+                    </div>
+                    <div class="project-footer">
+                        <div class="project-author" data-user="emma-davis">
+                            <div class="author-avatar">ED</div>
+                            <span>Emma Davis</span>
+                        </div>
+                        <button class="btn btn-primary apply-btn" data-project="UI/UX Design for FinTech App">Apply</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Applications Tab -->
+        <div class="tab-content" id="applications">
+            <h1 class="card-title">Applications</h1>
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title">Applications Received</h2>
+                </div>
+                <div class="activity-item">
+                    <div class="activity-header">
+                        <div class="activity-project">Application from Alex Chen</div>
+                        <div class="activity-status status-new">New</div>
+                    </div>
+                    <p>Alex Chen applied to your project "E-commerce Website Redesign".</p>
+                    <button class="btn btn-primary view-application-btn" data-applicant="Alex Chen" data-project="E-commerce Website Redesign">View Application</button>
+                </div>
+                <div class="activity-item">
+                    <div class="activity-header">
+                        <div class="activity-project">Application from Maria Rodriguez</div>
+                        <div class="activity-status status-new">New</div>
+                    </div>
+                    <p>Maria Rodriguez applied to your project "Mobile App Development".</p>
+                    <button class="btn btn-primary view-application-btn" data-applicant="Maria Rodriguez" data-project="Mobile App Development">View Application</button>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title">Applications Sent</h2>
+                </div>
+                <div class="activity-item application-sent-item" data-application-id="app-1">
+                    <div class="activity-header">
+                        <div class="activity-project">E-commerce Website Redesign</div>
+                        <div class="activity-status status-pending">Pending</div>
+                    </div>
+                    <p>You applied 2 days ago. The project owner is reviewing applications.</p>
+                </div>
+                <div class="activity-item application-sent-item" data-application-id="app-2">
+                    <div class="activity-header">
+                        <div class="activity-project">Mobile App Development</div>
+                        <div class="activity-status status-accepted">Accepted</div>
+                    </div>
+                    <p>Your application was accepted. Project starts next week.</p>
+                </div>
+                <div class="activity-item application-sent-item" data-application-id="app-3">
+                    <div class="activity-header">
+                        <div class="activity-project">Data Visualization Dashboard</div>
+                        <div class="activity-status status-rejected">Not Selected</div>
+                    </div>
+                    <p>Your application was not selected for this project.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Community Tab -->
+        <div class="tab-content" id="community">
+            <h1 class="card-title">Community Discussions</h1>
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title">Start a Discussion</h2>
+                </div>
+                <button class="btn btn-primary" id="start-discussion-btn">Start Discussion</button>
+            </div>
+
+            <div class="community-grid">
+                <div>
+                    <div class="discussion-item">
+                        <div class="discussion-header">
+                            <h3 class="discussion-title">Best practices for responsive web design in 2023</h3>
+                            <div class="discussion-meta">Posted by: Lisa Wong • 2 days ago</div>
+                        </div>
+                        <div class="discussion-content">
+                            <p>What are the current best practices for creating responsive websites that work well across all devices? I'm particularly interested in modern CSS techniques and how they compare to framework-based approaches.</p>
+                        </div>
+                        <div class="discussion-actions">
+                            <button class="btn btn-secondary join-discussion-btn" data-discussion="responsive-design">Join Discussion</button>
+                        </div>
+                    </div>
+
+                    <div class="discussion-item">
+                        <div class="discussion-header">
+                            <h3 class="discussion-title">How to effectively manage state in large React applications?</h3>
+                            <div class="discussion-meta">Posted by: David Kim • 5 days ago</div>
+                        </div>
+                        <div class="discussion-content">
+                            <p>I'm working on a large-scale React application and struggling with state management. What solutions have you found effective for managing complex state? Redux, Context API, or something else?</p>
+                        </div>
+                        <div class="discussion-actions">
+                            <button class="btn btn-secondary join-discussion-btn" data-discussion="react-state">Join Discussion</button>
+                        </div>
+                    </div>
+
+                    <div class="discussion-item">
+                        <div class="discussion-header">
+                            <h3 class="discussion-title">Tips for transitioning from frontend to fullstack development</h3>
+                            <div class="discussion-meta">Posted by: Marcus Johnson • 1 week ago</div>
+                        </div>
+                        <div class="discussion-content">
+                            <p>I've been a frontend developer for 5 years and want to transition to fullstack. What backend technologies would complement my existing React/JavaScript skills? Any recommended learning paths?</p>
+                        </div>
+                        <div class="discussion-actions">
+                            <button class="btn btn-secondary join-discussion-btn" data-discussion="fullstack-transition">Join Discussion</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="active-members">
+                    <h3>Active Community Members</h3>
+                    <div class="member-item">
+                        <div class="member-avatar" data-user="lisa-wong">LW</div>
+                        <div class="member-info">
+                            <h4 data-user="lisa-wong">Lisa Wong</h4>
+                            <p>UI/UX Designer • San Francisco</p>
+                        </div>
+                    </div>
+                    <div class="member-item">
+                        <div class="member-avatar" data-user="david-kim">DK</div>
+                        <div class="member-info">
+                            <h4 data-user="david-kim">David Kim</h4>
+                            <p>Fullstack Developer • New York</p>
+                        </div>
+                    </div>
+                    <div class="member-item">
+                        <div class="member-avatar" data-user="marcus-johnson">MJ</div>
+                        <div class="member-info">
+                            <h4 data-user="marcus-johnson">Marcus Johnson</h4>
+                            <p>Frontend Developer • Chicago</p>
+                        </div>
+                    </div>
+                    <div class="member-item">
+                        <div class="member-avatar" data-user="sarah-patel">SP</div>
+                        <div class="member-info">
+                            <h4 data-user="sarah-patel">Sarah Patel</h4>
+                            <p>Data Scientist • Austin</p>
+                        </div>
+                    </div>
+                    <div class="member-item">
+                        <div class="member-avatar" data-user="alex-chen">AC</div>
+                        <div class="member-info">
+                            <h4 data-user="alex-chen">Alex Chen</h4>
+                            <p>Mobile Developer • Seattle</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Messages Tab -->
+        <div class="tab-content" id="messages">
+            <h1 class="card-title">Messages</h1>
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title">Connection Requests</h2>
+                </div>
+                <div class="message-item">
+                    <div class="message-header">
+                        <div class="message-sender">
+                            <div class="sender-avatar">SJ</div>
+                            <div>
+                                <h3>Sarah Johnson</h3>
+                                <p>UI/UX Designer at DesignCo</p>
+                            </div>
+                        </div>
+                        <div class="message-time">2 hours ago</div>
+                    </div>
+                    <div class="message-content">
+                        <p>Hi! I saw your work on the e-commerce redesign and was impressed. I'd love to connect and discuss potential collaboration opportunities.</p>
+                    </div>
+                    <div class="message-actions">
+                        <button class="btn btn-success accept-request-btn" data-user="Sarah Johnson">Accept</button>
+                        <button class="btn btn-danger">Decline</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title">Recent Conversations</h2>
+                </div>
+                <div class="message-item">
+                    <div class="message-header">
+                        <div class="message-sender">
+                            <div class="sender-avatar">MJ</div>
+                            <div>
+                                <h3>Michael Johnson</h3>
+                                <p>Project Owner - E-commerce Redesign</p>
+                            </div>
+                        </div>
+                        <div class="message-time">1 day ago</div>
+                    </div>
+                    <div class="message-content">
+                        <p>Thanks for your application! I'd like to schedule a quick call to discuss your approach to the project. Are you available tomorrow?</p>
+                    </div>
+                    <div class="message-actions">
+                        <button class="btn btn-primary reply-btn" data-user="Michael Johnson">Reply</button>
+                    </div>
+                </div>
+
+                <div class="message-item">
+                    <div class="message-header">
+                        <div class="message-sender">
+                            <div class="sender-avatar">ED</div>
+                            <div>
+                                <h3>Emma Davis</h3>
+                                <p>Collaborator - Mobile App Project</p>
+                            </div>
+                        </div>
+                        <div class="message-time">3 days ago</div>
+                    </div>
+                    <div class="message-content">
+                        <p>I've completed the initial wireframes for the onboarding flow. Let me know when you have time to review them.</p>
+                    </div>
+                    <div class="message-actions">
+                        <button class="btn btn-primary reply-btn" data-user="Emma Davis">Reply</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Portfolio Tab -->
+        <div class="tab-content" id="portfolio">
+            <h1 class="card-title">My Portfolio</h1>
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title">Add New Project</h2>
+                </div>
+                <button class="btn btn-primary" id="add-project-btn">Add Project</button>
+            </div>
+
+            <div class="portfolio-grid">
+                <div class="portfolio-item">
+                    <div class="portfolio-image">📱</div>
+                    <div class="portfolio-content">
+                        <h3 class="portfolio-title">Fitness Tracking App</h3>
+                        <p class="portfolio-description">A mobile application that helps users track their workouts, set goals, and monitor progress with personalized recommendations.</p>
+                        <div class="portfolio-links">
+                            <a href="#" class="portfolio-link">Live Demo</a>
+                            <a href="#" class="portfolio-link">GitHub</a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="portfolio-item">
+                    <div class="portfolio-image">🛒</div>
+                    <div class="portfolio-content">
+                        <h3 class="portfolio-title">E-commerce Redesign</h3>
+                        <p class="portfolio-description">Complete redesign of an online store focusing on improving user experience and increasing conversion rates.</p>
+                        <div class="portfolio-links">
+                            <a href="#" class="portfolio-link">Live Demo</a>
+                            <a href="#" class="portfolio-link">Case Study</a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="portfolio-item">
+                    <div class="portfolio-image">📊</div>
+                    <div class="portfolio-content">
+                        <h3 class="portfolio-title">Data Visualization Dashboard</h3>
+                        <p class="portfolio-description">Interactive dashboard for visualizing complex datasets with multiple chart types and filtering options.</p>
+                        <div class="portfolio-links">
+                            <a href="#" class="portfolio-link">Live Demo</a>
+                            <a href="#" class="portfolio-link">GitHub</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-grid">
+                <div class="footer-section">
+                    <h3>About BuildNest</h3>
+                    <p>BuildNest connects developers, designers, and creators to collaborate on innovative projects and bring ideas to life.</p>
+                </div>
+                <div class="footer-section">
+                    <h3>Quick Links</h3>
+                    <p><a href="#">How It Works</a></p>
+                    <p><a href="#">Success Stories</a></p>
+                    <p><a href="#">FAQ</a></p>
+                    <p><a href="#">Support</a></p>
+                </div>
+                <div class="footer-section">
+                    <h3>Resources</h3>
+                    <p><a href="#">Blog</a></p>
+                    <p><a href="#">Tutorials</a></p>
+                    <p><a href="#">Community Guidelines</a></p>
+                    <p><a href="#">Terms of Service</a></p>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2023 BuildNest. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- NEW PAGES -->
+    <!-- Private Profile Notice Page -->
+    <div class="page" id="private-profile-page">
+        <div class="page-header">
+            <h2 class="page-title">Profile Not Available</h2>
+            <button class="back-button" onclick="closePage('private-profile-page')">← Back</button>
+        </div>
+        <div class="page-content">
+            <div class="private-profile-notice">
+                <h3>This profile is private</h3>
+                <p>The user has set their profile to private. You need to be connected to view their profile.</p>
+                <button class="btn btn-primary mt-2" onclick="closePage('private-profile-page')">Okay</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Submit Project for Review Page -->
+    <div class="page" id="submit-project-page">
+        <div class="page-header">
+            <h2 class="page-title">Submit Project for Review</h2>
+            <button class="back-button" onclick="closePage('submit-project-page')">← Back</button>
+        </div>
+        <div class="page-content">
+            <div class="card">
+                <h3>Project: <span id="submit-project-name">E-commerce Website Redesign</span></h3>
+                <p class="mb-2">Submit your completed work to the project owner for review.</p>
+                
+                <form id="project-submission-form">
+                    <div class="form-group">
+                        <label class="form-label">Project Repository URL</label>
+                        <input type="url" class="form-input" placeholder="https://github.com/username/repo" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Live Demo URL (if available)</label>
+                        <input type="url" class="form-input" placeholder="https://your-project-demo.com">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Description of Completed Work</label>
+                        <textarea class="form-textarea" placeholder="Describe what you've accomplished in this project..." required></textarea>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Notes to Project Owner</label>
+                        <textarea class="form-textarea" placeholder="Any additional notes or instructions..."></textarea>
+                    </div>
+                    
+                    <div class="submission-preview">
+                        <h4>Submission Preview</h4>
+                        <p><strong>Project:</strong> <span id="preview-project-name">E-commerce Website Redesign</span></p>
+                        <p><strong>Submitted by:</strong> John Doe</p>
+                        <p><strong>Date:</strong> <span id="preview-submission-date"></span></p>
+                    </div>
+                    
+                    <button type="submit" class="btn btn-primary">Submit for Review</button>
+                </form>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Review Submission Page (for project owners) -->
+    <div class="page" id="review-submission-page">
+        <div class="page-header">
+            <h2 class="page-title">Review Project Submission</h2>
+            <button class="back-button" onclick="closePage('review-submission-page')">← Back</button>
+        </div>
+        <div class="page-content">
+            <div class="card">
+                <h3>Project: <span id="review-project-name">E-commerce Website Redesign</span></h3>
+                <p><strong>Submitted by:</strong> <span id="review-submitter-name">John Doe</span></p>
+                <p><strong>Submitted on:</strong> <span id="review-submission-date">November 15, 2023</span></p>
+                
+                <div class="form-group">
+                    <label class="form-label">Repository URL</label>
+                    <div class="p-2" style="background: #f8fafc; border-radius: 8px;">
+                        <p><a href="#" id="review-repo-url">https://github.com/johndoe/ecommerce-redesign</a></p>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Live Demo URL</label>
+                    <div class="p-2" style="background: #f8fafc; border-radius: 8px;">
+                        <p><a href="#" id="review-demo-url">https://ecommerce-redesign-demo.com</a></p>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Description of Work</label>
+                    <div class="p-2" style="background: #f8fafc; border-radius: 8px;">
+                        <p id="review-work-description">Completed the full redesign of the e-commerce website, including new UI components, improved checkout flow, and responsive design implementation.</p>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Notes from Submitter</label>
+                    <div class="p-2" style="background: #f8fafc; border-radius: 8px;">
+                        <p id="review-submitter-notes">Please pay special attention to the new cart functionality and responsive product pages.</p>
+                    </div>
+                </div>
+                
+                <h4>Your Review</h4>
+                <form id="project-review-form">
+                    <div class="form-group">
+                        <label class="form-label">Review Notes</label>
+                        <textarea class="form-textarea" placeholder="Provide feedback on the submitted work..." required></textarea>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Status</label>
+                        <select class="form-select" required>
+                            <option value="">Select status</option>
+                            <option value="approved">Approved - Add to portfolio</option>
+                            <option value="revisions">Revisions needed</option>
+                            <option value="rejected">Rejected</option>
+                        </select>
+                    </div>
+                    
+                    <div class="review-actions">
+                        <button type="submit" class="btn btn-success">Submit Review</button>
+                        <button type="button" class="btn btn-primary" id="message-submitter-btn">Message Collaborator</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Application Form Page -->
+    <div class="page" id="application-page">
+        <div class="page-header">
+            <h2 class="page-title">Apply for Project: <span id="application-project-name"></span></h2>
+            <button class="back-button" onclick="closePage('application-page')">← Back</button>
+        </div>
+        <div class="page-content">
+            <div class="card">
+                <form id="application-form">
+                    <div class="form-group">
+                        <label class="form-label">Why do you want to join this project?</label>
+                        <textarea class="form-textarea" placeholder="Explain your motivation for joining this project..." required></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">State your experience and related work</label>
+                        <textarea class="form-textarea" placeholder="Describe your relevant experience and past projects..." required></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Submit Application</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- View Application Page -->
+    <div class="page" id="view-application-page">
+        <div class="page-header">
+            <h2 class="page-title">Application from <span id="application-applicant-name"></span></h2>
+            <button class="back-button" onclick="closePage('view-application-page')">← Back</button>
+        </div>
+        <div class="page-content">
+            <div class="card">
+                <h3>Project: <span id="application-view-project-name"></span></h3>
+                <div class="form-group">
+                    <label class="form-label">Why do you want to join this project?</label>
+                    <div class="p-2" style="background: #f8fafc; border-radius: 8px;">
+                        <p id="application-motivation">I'm passionate about e-commerce and have extensive experience with React and Node.js. This project aligns perfectly with my skills and interests.</p>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Experience and related work</label>
+                    <div class="p-2" style="background: #f8fafc; border-radius: 8px;">
+                        <p id="application-experience">I've worked on 3 e-commerce projects in the past year, including a complete redesign for a local retailer that increased conversions by 35%. I'm proficient in React, Node.js, and MongoDB.</p>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <button class="btn btn-success">Accept Application</button>
+                    <button class="btn btn-danger">Decline Application</button>
+                    <button class="btn btn-primary contact-applicant-btn">Contact Applicant</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Start Discussion Page -->
+    <div class="page" id="discussion-page">
+        <div class="page-header">
+            <h2 class="page-title">Start a New Discussion</h2>
+            <button class="back-button" onclick="closePage('discussion-page')">← Back</button>
+        </div>
+        <div class="page-content">
+            <div class="card">
+                <form id="discussion-form">
+                    <div class="form-group">
+                        <label class="form-label">Discussion Title</label>
+                        <input type="text" class="form-input" placeholder="Enter a title for your discussion..." required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Discussion Content</label>
+                        <textarea class="form-textarea" placeholder="What would you like to discuss?" required></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Tags</label>
+                        <input type="text" class="form-input" placeholder="Add relevant tags (comma separated)...">
+                    </div>
+                    <button type="submit" class="btn btn-primary">Post Discussion</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Discussion Thread Page -->
+    <div class="page" id="discussion-thread-page">
+        <div class="page-header">
+            <h2 class="page-title" id="discussion-thread-title">Discussion Thread</h2>
+            <button class="back-button" onclick="closePage('discussion-thread-page')">← Back</button>
+        </div>
+        <div class="page-content">
+            <div class="card">
+                <div class="discussion-header">
+                    <h3 class="discussion-title" id="thread-title">Best practices for responsive web design in 2023</h3>
+                    <div class="discussion-meta" id="thread-meta">Posted by: Lisa Wong • 2 days ago</div>
+                </div>
+                <div class="discussion-content">
+                    <p id="thread-content">What are the current best practices for creating responsive websites that work well across all devices? I'm particularly interested in modern CSS techniques and how they compare to framework-based approaches.</p>
+                </div>
+
+                <div class="comment-section">
+                    <h4>Comments</h4>
+                    <div class="comment-item">
+                        <div class="comment-author">David Kim</div>
+                        <div class="comment-content">I've found that using CSS Grid and Flexbox together provides the most flexibility for responsive layouts. Also, consider using container queries for more component-based responsiveness.</div>
+                    </div>
+                    <div class="comment-item">
+                        <div class="comment-author">Sarah Patel</div>
+                        <div class="comment-content">Don't forget about accessibility! Make sure your responsive designs also work well with screen readers and other assistive technologies.</div>
+                    </div>
+
+                    <form class="comment-form">
+                        <div class="form-group">
+                            <label class="form-label">Add a comment</label>
+                            <textarea class="form-textarea" placeholder="Write your comment here..." required></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Post Comment</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Connection Greeting Page -->
+    <div class="page" id="greeting-page">
+        <div class="page-header">
+            <h2 class="page-title">Send a greeting to <span id="connection-user-name"></span></h2>
+            <button class="back-button" onclick="closePage('greeting-page')">← Back</button>
+        </div>
+        <div class="page-content">
+            <div class="card">
+                <p>You've accepted the connection request from <span id="connection-name"></span>. Send them a greeting message to start the conversation!</p>
+                <form id="greeting-form">
+                    <div class="form-group">
+                        <label class="form-label">Your Message</label>
+                        <textarea class="form-textarea" placeholder="Hello! I'd like to connect with you..." required>Hello! I'd like to connect with you to discuss potential collaborations.</textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Send Message</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Chat Page -->
+    <div class="page" id="chat-page">
+        <div class="page-header">
+            <h2 class="page-title">Chat with <span id="chat-user-name"></span></h2>
+            <button class="back-button" onclick="closePage('chat-page')">← Back</button>
+        </div>
+        <div class="page-content">
+            <div class="chat-container">
+                <div class="chat-header">
+                    <div class="sender-avatar" id="chat-user-avatar">MJ</div>
+                    <div>
+                        <h3 id="chat-user-fullname">Michael Johnson</h3>
+                        <p id="chat-user-status">Online</p>
+                    </div>
+                </div>
+                <div class="chat-messages">
+                    <div class="message received">
+                        <div class="message-content">Thanks for your application! I'd like to schedule a quick call to discuss your approach to the project. Are you available tomorrow?</div>
+                        <div class="message-time">10:30 AM</div>
+                    </div>
+                    <div class="message sent">
+                        <div class="message-content">Yes, I'm available tomorrow after 2 PM. Would that work for you?</div>
+                        <div class="message-time">10:32 AM</div>
+                    </div>
+                    <div class="message received">
+                        <div class="message-content">2 PM works perfectly. I'll send you a calendar invite with the meeting details.</div>
+                        <div class="message-time">10:33 AM</div>
+                    </div>
+                </div>
+                <div class="chat-input">
+                    <input type="text" placeholder="Type a message...">
+                    <button>Send</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Project Detail Page -->
+    <div class="page" id="project-detail-page">
+        <div class="page-header">
+            <h2 class="page-title">Project Details</h2>
+            <button class="back-button" onclick="closePage('project-detail-page')">← Back</button>
+        </div>
+        <div class="page-content">
+            <div class="card">
+                <div class="project-header">
+                    <h3 class="project-title" id="detail-project-title">E-commerce Website Redesign</h3>
+                    <div class="project-badges">
+                        <span class="project-type type-group">Group Project</span>
+                        <span class="skill-level level-intermediate">Intermediate</span>
+                    </div>
+                </div>
+                <div class="project-detail-meta">
+                    <p><strong>Posted by:</strong> <span id="detail-project-author">Michael Johnson</span></p>
+                    <p><strong>Posted on:</strong> <span id="detail-project-date">October 15, 2023</span></p>
+                    <p><strong>Duration:</strong> <span id="detail-project-duration">2-3 months</span></p>
+                    <p><strong>Team Size:</strong> <span id="detail-team-size">4 people needed</span></p>
+                </div>
+                <h4>Project Description</h4>
+                <p class="project-description" id="detail-project-description">Redesign an existing e-commerce website to improve user experience and increase conversion rates. The project will involve complete redesign of the UI, improving the checkout process, and implementing responsive design principles.</p>
+                
+                <h4>Technical Requirements</h4>
+                <div class="project-tech">
+                    <span class="tech-badge">React</span>
+                    <span class="tech-badge">Node.js</span>
+                    <span class="tech-badge">MongoDB</span>
+                    <span class="tech-badge">Figma</span>
+                </div>
+                
+                <h4>Team Composition</h4>
+                <p>Looking for 3-4 collaborators (1-2 developers, 1 designer, 1 UX researcher)</p>
+                
+                <div class="project-footer">
+                    <button class="btn btn-primary apply-btn" data-project="E-commerce Website Redesign">Apply for Project</button>
+                    <button class="btn btn-orange contact-owner-btn" data-user="Michael Johnson">Contact Project Owner</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Project Page -->
+    <div class="page" id="add-project-page">
+        <div class="page-header">
+            <h2 class="page-title">Add New Project</h2>
+            <button class="back-button" onclick="closePage('add-project-page')">← Back</button>
+        </div>
+        <div class="page-content">
+            <div class="card">
+                <form id="add-project-form">
+                    <div class="form-group">
+                        <label class="form-label">Project Title</label>
+                        <input type="text" class="form-input" placeholder="Enter project title" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Project Description</label>
+                        <textarea class="form-textarea" placeholder="Describe your project in detail..." required></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Project Type</label>
+                        <select class="form-select" required>
+                            <option value="">Select project type</option>
+                            <option value="solo">Solo Project</option>
+                            <option value="group">Group Project</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Skill Level</label>
+                        <select class="form-select" required>
+                            <option value="">Select skill level</option>
+                            <option value="beginner">Beginner</option>
+                            <option value="intermediate">Intermediate</option>
+                            <option value="advanced">Advanced</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Field</label>
+                        <select class="form-select" required>
+                            <option value="">Select field</option>
+                            <option value="web">Web Development</option>
+                            <option value="mobile">Mobile Development</option>
+                            <option value="design">UI/UX Design</option>
+                            <option value="data">Data Science</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Technologies</label>
+                        <input type="text" class="form-input" placeholder="List technologies used (comma separated)">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Live Demo URL</label>
+                        <input type="url" class="form-input" placeholder="https://">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">GitHub Repository</label>
+                        <input type="url" class="form-input" placeholder="https://github.com/username/repo">
+                    </div>
+                    <button type="submit" class="btn btn-primary">Add Project</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Profile Page -->
+    <div class="page" id="profile-page">
+        <div class="page-header">
+            <h2 class="page-title">My Profile</h2>
+            <button class="back-button" onclick="closePage('profile-page')">← Back</button>
+        </div>
+        <div class="page-content">
+            <div class="card">
+                <div class="profile-dropdown-header">
+                    <div class="profile-dropdown-avatar">JD</div>
+                    <div class="profile-dropdown-info">
+                        <h3>John Doe</h3>
+                        <p>UI/UX Designer</p>
+                        <p>San Francisco, CA</p>
+                    </div>
+                </div>
+                <div class="profile-details">
+                    <div class="profile-detail-item">
+                        <span class="profile-detail-label">Experience:</span>
+                        <span class="profile-detail-value">5 years</span>
+                    </div>
+                    <div class="profile-detail-item">
+                        <span class="profile-detail-label">Projects Completed:</span>
+                        <span class="profile-detail-value">12</span>
+                    </div>
+                    <div class="profile-detail-item">
+                        <span class="profile-detail-label">Rating:</span>
+                        <span class="profile-detail-value">4.8/5.0</span>
+                    </div>
+                    <div class="profile-detail-item">
+                        <span class="profile-detail-label">Connections:</span>
+                        <span class="profile-detail-value">47</span>
+                    </div>
+                    <div class="profile-detail-item">
+                        <span class="profile-detail-label">Specialties:</span>
+                        <span class="profile-detail-value">UI Design, UX Research, Frontend Development</span>
+                    </div>
+                    <div class="profile-detail-item">
+                        <span class="profile-detail-label">Skills:</span>
+                        <span class="profile-detail-value">Figma, Sketch, Adobe XD, HTML, CSS, JavaScript, React</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card mt-3">
+                <div class="card-header">
+                    <h2 class="card-title">Bio/Introduction</h2>
+                </div>
+                <p>Experienced UI/UX designer with 5 years of experience creating intuitive and engaging user experiences for web and mobile applications. Passionate about user-centered design and creating products that solve real problems for users.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit Profile Page -->
+    <div class="page" id="edit-profile-page">
+        <div class="page-header">
+            <h2 class="page-title">Edit Profile</h2>
+            <button class="back-button" onclick="closePage('edit-profile-page')">← Back</button>
+        </div>
+        <div class="page-content">
+            <div class="card">
+                <form id="edit-profile-form">
+                    <div class="form-group">
+                        <label class="form-label">Full Name</label>
+                        <input type="text" class="form-input" value="John Doe">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Title/Role</label>
+                        <input type="text" class="form-input" value="UI/UX Designer">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Location</label>
+                        <input type="text" class="form-input" value="San Francisco, CA">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Bio/Introduction</label>
+                        <textarea class="form-textarea">Experienced UI/UX designer with 5 years of experience creating intuitive and engaging user experiences for web and mobile applications. Passionate about user-centered design and creating products that solve real problems for users.</textarea>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Skills (comma separated)</label>
+                        <input type="text" class="form-input" value="Figma, Sketch, Adobe XD, HTML, CSS, JavaScript, React">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Experience Level</label>
+                        <select class="form-select">
+                            <option>Beginner</option>
+                            <option>Intermediate</option>
+                            <option selected>Advanced</option>
+                            <option>Expert</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Profile Privacy</label>
+                        <select class="form-select">
+                            <option value="public" selected>Public</option>
+                            <option value="private">Private</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Save Changes</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Settings Page -->
+    <div class="page" id="settings-page">
+        <div class="page-header">
+            <h2 class="page-title">Settings</h2>
+            <button class="back-button" onclick="closePage('settings-page')">← Back</button>
+        </div>
+        <div class="page-content">
+            <div class="card">
+                <h3>Account Settings</h3>
+                <form id="settings-form">
+                    <div class="form-group">
+                        <label class="form-label">Email Address</label>
+                        <input type="email" class="form-input" value="johndoe@example.com">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Notification Preferences</label>
+                        <div>
+                            <label><input type="checkbox" checked> Email Notifications</label>
+                        </div>
+                        <div>
+                            <label><input type="checkbox" checked> Project Recommendations</label>
+                        </div>
+                        <div>
+                            <label><input type="checkbox" checked> Connection Requests</label>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Privacy Settings</label>
+                        <select class="form-select">
+                            <option>Public Profile</option>
+                            <option>Only Connections</option>
+                            <option>Private</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Save Settings</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Notifications Page -->
+    <div class="page" id="notifications-page">
+        <div class="page-header">
+            <h2 class="page-title">Notifications</h2>
+            <button class="back-button" onclick="closePage('notifications-page')">← Back</button>
+        </div>
+        <div class="page-content">
+            <div class="card">
+                <div class="activity-item">
+                    <div class="activity-header">
+                        <div class="activity-project">New Connection Request</div>
+                        <div class="activity-status status-new">New</div>
+                    </div>
+                    <p>Sarah Johnson wants to connect with you.</p>
+                    <div class="message-actions">
+                        <button class="btn btn-success">Accept</button>
+                        <button class="btn btn-danger">Decline</button>
+                    </div>
+                </div>
+                <div class="activity-item">
+                    <div class="activity-header">
+                        <div class="activity-project">Project Application Update</div>
+                        <div class="activity-status status-accepted">Accepted</div>
+                    </div>
+                    <p>Your application for "Mobile App Development" has been accepted.</p>
+                </div>
+                <div class="activity-item">
+                    <div class="activity-header">
+                        <div class="activity-project">New Message</div>
+                        <div class="activity-status status-new">New</div>
+                    </div>
+                    <p>You have a new message from Michael Johnson.</p>
+                </div>
+                <div class="activity-item">
+                    <div class="activity-header">
+                        <div class="activity-project">Community Update</div>
+                        <div class="activity-status status-pending">Info</div>
+                    </div>
+                    <p>New discussion started: "Best practices for responsive web design in 2023".</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Application Details Page -->
+    <div class="page" id="application-details-page">
+        <div class="page-header">
+            <h2 class="page-title">Application Details</h2>
+            <button class="back-button" onclick="closePage('application-details-page')">← Back</button>
+        </div>
+        <div class="page-content">
+            <div class="card">
+                <div class="activity-header">
+                    <div class="activity-project">Application for Mobile App Development</div>
+                    <div class="activity-status status-accepted">Accepted</div>
+                </div>
+                <div class="project-detail-meta">
+                    <p><strong>Submitted on:</strong> October 12, 2023</p>
+                    <p><strong>Status:</strong> Accepted - October 15, 2023</p>
+                    <p><strong>Project Owner:</strong> Sarah Lee</p>
+                </div>
+                <h4>Application Message</h4>
+                <div class="p-2" style="background: #f8fafc; border-radius: 8px;">
+                    <p>I have extensive experience with React Native and have built several fitness applications in the past. I'm particularly interested in this project because of its focus on personalized recommendations, which aligns with my expertise in machine learning for user behavior analysis.</p>
+                </div>
+                <h4>Project Timeline</h4>
+                <p>Kickoff meeting scheduled for October 20, 2023. Expected completion date: December 15, 2023.</p>
+                <div class="project-footer">
+                    <button class="btn btn-primary contact-owner-btn" data-user="Sarah Lee">Contact Project Owner</button>
+                    <button class="btn btn-secondary">View Project Details</button>
+                    <button class="btn btn-orange submit-work-btn" data-project="Mobile App Development">Submit Completed Work</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Submission Details Page -->
+    <div class="page" id="submission-details-page">
+        <div class="page-header">
+            <h2 class="page-title">Submission Details</h2>
+            <button class="back-button" onclick="closePage('submission-details-page')">← Back</button>
+        </div>
+        <div class="page-content">
+            <div class="card">
+                <div class="activity-header">
+                    <div class="activity-project" id="submission-detail-title">E-commerce Website Redesign</div>
+                    <div class="activity-status" id="submission-detail-status">Under Review</div>
+                </div>
+                <div class="project-detail-meta">
+                    <p><strong>Submitted on:</strong> <span id="submission-detail-date">October 20, 2023</span></p>
+                    <p><strong>Project Owner:</strong> <span id="submission-detail-owner">Michael Johnson</span></p>
+                    <p><strong>Submission ID:</strong> <span id="submission-detail-id">SUB-2023-001</span></p>
+                </div>
+                
+                <h4>Repository & Demo Links</h4>
+                <div class="p-2" style="background: #f8fafc; border-radius: 8px; margin-bottom: 1rem;">
+                    <p><strong>Repository:</strong> <a href="#" id="submission-detail-repo" style="color: #1976d2;">github.com/johndoe/ecommerce-redesign</a></p>
+                    <p><strong>Live Demo:</strong> <a href="#" id="submission-detail-demo" style="color: #1976d2;">ecommerce-demo.com</a></p>
+                    <p><strong>Documentation:</strong> <a href="#" id="submission-detail-docs" style="color: #1976d2;">project-docs.com</a></p>
+                </div>
+                
+                <h4>Work Description</h4>
+                <div class="p-2" style="background: #f8fafc; border-radius: 8px; margin-bottom: 1rem;">
+                    <p id="submission-detail-description">Completed the full redesign of the e-commerce website, including new UI components, improved checkout flow, and responsive design implementation. All requirements have been met and the project is ready for review.</p>
+                </div>
+                
+                <h4>Technical Implementation</h4>
+                <div class="p-2" style="background: #f8fafc; border-radius: 8px; margin-bottom: 1rem;">
+                    <p><strong>Technologies Used:</strong> <span id="submission-detail-tech">React, Node.js, MongoDB, Figma</span></p>
+                    <p><strong>Features Implemented:</strong> <span id="submission-detail-features">Responsive design, improved UX, optimized checkout flow, mobile compatibility</span></p>
+                    <p><strong>Testing:</strong> <span id="submission-detail-testing">Cross-browser testing completed, mobile responsiveness verified</span></p>
+                </div>
+                
+                <h4>Notes to Project Owner</h4>
+                <div class="p-2" style="background: #f8fafc; border-radius: 8px; margin-bottom: 1rem;">
+                    <p id="submission-detail-notes">Please pay special attention to the new cart functionality and responsive product pages. All user feedback from the testing phase has been incorporated.</p>
+                </div>
+                
+                <h4>Review Status</h4>
+                <div class="p-2" style="background: #f8fafc; border-radius: 8px; margin-bottom: 1rem;">
+                    <p><strong>Current Status:</strong> <span id="submission-detail-current-status">Under Review</span></p>
+                    <p><strong>Review Deadline:</strong> <span id="submission-detail-deadline">October 25, 2023</span></p>
+                    <p><strong>Last Updated:</strong> <span id="submission-detail-last-updated">October 20, 2023</span></p>
+                </div>
+                
+                <div class="project-footer">
+                    <button class="btn btn-primary contact-owner-btn" id="submission-contact-owner">Contact Project Owner</button>
+                    <button class="btn btn-secondary" id="submission-view-project">View Original Project</button>
+                    <button class="btn btn-orange" id="submission-edit-submission" style="display: none;">Edit Submission</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Data structure to track project applications
+        const projectApplications = {
+            "E-commerce Website Redesign": {
+                needed: 4,
+                applicants: 8,
+                applicantsList: ["Alex Chen", "Maria Rodriguez", "John Doe", "Sarah Kim", "Mike Johnson", "Lisa Wang", "David Smith", "Anna Taylor"]
+            },
+            "Mobile App Development": {
+                needed: 1,
+                applicants: 3,
+                applicantsList: ["John Doe", "Robert Brown", "Emily Davis"]
+            },
+            "Data Visualization Dashboard": {
+                needed: 3,
+                applicants: 5,
+                applicantsList: ["John Doe", "Michael Scott", "Pam Beesly", "Jim Halpert", "Dwight Schrute"]
+            },
+            "UI/UX Design for FinTech App": {
+                needed: 1,
+                applicants: 2,
+                applicantsList: ["John Doe", "Rachel Green"]
+            }
+        };
+
+        // Data structure to track user profile privacy settings
+        const userPrivacySettings = {
+            "lisa-wong": "public",
+            "david-kim": "public", 
+            "marcus-johnson": "public",
+            "sarah-patel": "private",
+            "alex-chen": "public",
+            "michael-johnson": "public",
+            "sarah-lee": "public",
+            "robert-kim": "public",
+            "emma-davis": "public"
+        };
+
+        // Tab Switching Functionality
+        document.querySelectorAll('.tab-button').forEach(button => {
+            button.addEventListener('click', () => {
+                // Remove active class from all tabs and contents
+                document.querySelectorAll('.tab-button').forEach(btn => btn.classList.remove('active'));
+                document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+                
+                // Add active class to clicked tab and corresponding content
+                button.classList.add('active');
+                document.getElementById(button.dataset.tab).classList.add('active');
+            });
+        });
+
+        // User Profile Dropdown
+        const profileTrigger = document.querySelector('.user-profile-trigger');
+        const profileDropdown = document.querySelector('.profile-dropdown');
+
+        profileTrigger.addEventListener('click', (e) => {
+            e.stopPropagation();
+            profileTrigger.classList.toggle('active');
+            profileDropdown.classList.toggle('active');
+        });
+
+        // Close dropdown when clicking outside
+        document.addEventListener('click', (e) => {
+            if (!profileTrigger.contains(e.target) && !profileDropdown.contains(e.target)) {
+                profileTrigger.classList.remove('active');
+                profileDropdown.classList.remove('active');
+            }
+        });
+
+        // Apply for Project Button
+        document.querySelectorAll('.apply-btn').forEach(button => {
+            button.addEventListener('click', () => {
+                const projectName = button.dataset.project;
+                document.getElementById('application-project-name').textContent = projectName;
+                openPage('application-page');
+            });
+        });
+
+        // View Application Button
+        document.querySelectorAll('.view-application-btn').forEach(button => {
+            button.addEventListener('click', () => {
+                const applicantName = button.dataset.applicant;
+                const projectName = button.dataset.project;
+                document.getElementById('application-applicant-name').textContent = applicantName;
+                document.getElementById('application-view-project-name').textContent = projectName;
+                openPage('view-application-page');
+            });
+        });
+
+        // Start Discussion Button
+        document.getElementById('start-discussion-btn').addEventListener('click', () => {
+            openPage('discussion-page');
+        });
+
+        // Join Discussion Button
+        document.querySelectorAll('.join-discussion-btn').forEach(button => {
+            button.addEventListener('click', () => {
+                const discussionTopic = button.dataset.discussion;
+                let title, author, content;
+                
+                switch(discussionTopic) {
+                    case 'responsive-design':
+                        title = 'Best practices for responsive web design in 2023';
+                        author = 'Lisa Wong • 2 days ago';
+                        content = 'What are the current best practices for creating responsive websites that work well across all devices? I\'m particularly interested in modern CSS techniques and how they compare to framework-based approaches.';
+                        break;
+                    case 'react-state':
+                        title = 'How to effectively manage state in large React applications?';
+                        author = 'David Kim • 5 days ago';
+                        content = 'I\'m working on a large-scale React application and struggling with state management. What solutions have you found effective for managing complex state? Redux, Context API, or something else?';
+                        break;
+                    case 'fullstack-transition':
+                        title = 'Tips for transitioning from frontend to fullstack development';
+                        author = 'Marcus Johnson • 1 week ago';
+                        content = 'I\'ve been a frontend developer for 5 years and want to transition to fullstack. What backend technologies would complement my existing React/JavaScript skills? Any recommended learning paths?';
+                        break;
+                }
+                
+                document.getElementById('thread-title').textContent = title;
+                document.getElementById('thread-meta').textContent = 'Posted by: ' + author;
+                document.getElementById('thread-content').textContent = content;
+                document.getElementById('discussion-thread-title').textContent = title;
+                
+                openPage('discussion-thread-page');
+            });
+        });
+
+        // Accept Connection Request Button
+        document.querySelectorAll('.accept-request-btn').forEach(button => {
+            button.addEventListener('click', () => {
+                const userName = button.dataset.user;
+                document.getElementById('connection-user-name').textContent = userName;
+                document.getElementById('connection-name').textContent = userName;
+                openPage('greeting-page');
+            });
+        });
+
+        // Reply Button (Messages)
+        document.querySelectorAll('.reply-btn').forEach(button => {
+            button.addEventListener('click', () => {
+                const userName = button.dataset.user;
+                let avatar, fullname, status;
+                
+                switch(userName) {
+                    case 'Michael Johnson':
+                        avatar = 'MJ';
+                        fullname = 'Michael Johnson';
+                        status = 'Online';
+                        break;
+                    case 'Emma Davis':
+                        avatar = 'ED';
+                        fullname = 'Emma Davis';
+                        status = 'Online';
+                        break;
+                }
+                
+                document.getElementById('chat-user-avatar').textContent = avatar;
+                document.getElementById('chat-user-name').textContent = userName;
+                document.getElementById('chat-user-fullname').textContent = fullname;
+                document.getElementById('chat-user-status').textContent = status;
+                
+                openPage('chat-page');
+            });
+        });
+
+        // View Profile Button
+        document.getElementById('view-profile-btn').addEventListener('click', () => {
+            openPage('profile-page');
+        });
+
+        // Edit Profile Button
+        document.getElementById('edit-profile-btn').addEventListener('click', () => {
+            openPage('edit-profile-page');
+        });
+
+        // Settings Button
+        document.getElementById('settings-btn').addEventListener('click', () => {
+            openPage('settings-page');
+        });
+
+        // Notifications Button
+        document.getElementById('notifications-btn').addEventListener('click', () => {
+            openPage('notifications-page');
+        });
+
+        // Add Project Button
+        document.getElementById('add-project-btn').addEventListener('click', () => {
+            openPage('add-project-page');
+        });
+
+        // Review Submissions Button
+        document.querySelectorAll('.review-submission-btn').forEach(button => {
+            button.addEventListener('click', () => {
+                const submissionName = button.dataset.submission;
+                const submitterName = button.dataset.submitter;
+                
+                document.getElementById('review-project-name').textContent = submissionName;
+                document.getElementById('review-submitter-name').textContent = submitterName;
+                document.getElementById('review-submission-date').textContent = new Date().toLocaleDateString();
+                document.getElementById('review-repo-url').textContent = `https://github.com/${submitterName.toLowerCase().replace(' ', '')}/${submissionName.toLowerCase().replace(/\s+/g, '-')}`;
+                document.getElementById('review-demo-url').textContent = `https://${submissionName.toLowerCase().replace(/\s+/g, '-')}-demo.com`;
+                document.getElementById('review-work-description').textContent = `Completed the ${submissionName.toLowerCase()} project with focus on user experience and technical implementation.`;
+                document.getElementById('review-submitter-notes').textContent = `Please review the implementation and provide feedback on the design and functionality.`;
+                
+                openPage('review-submission-page');
+            });
+        });
+
+        // View Submission Details Button
+        document.querySelectorAll('.view-submission-details-btn').forEach(button => {
+            button.addEventListener('click', (e) => {
+                e.stopPropagation(); // Prevent card click
+                const submissionName = button.dataset.submission;
+                
+                // Populate submission details page
+                document.getElementById('submission-detail-title').textContent = submissionName;
+                document.getElementById('submission-detail-status').textContent = 'Under Review';
+                document.getElementById('submission-detail-status').className = 'activity-status status-pending';
+                document.getElementById('submission-detail-date').textContent = 'October 20, 2023';
+                document.getElementById('submission-detail-owner').textContent = 'Michael Johnson';
+                document.getElementById('submission-detail-id').textContent = 'SUB-2023-001';
+                document.getElementById('submission-detail-repo').textContent = 'github.com/johndoe/' + submissionName.toLowerCase().replace(/\s+/g, '-');
+                document.getElementById('submission-detail-demo').textContent = submissionName.toLowerCase().replace(/\s+/g, '-') + '-demo.com';
+                document.getElementById('submission-detail-docs').textContent = 'project-docs.com';
+                document.getElementById('submission-detail-description').textContent = `Completed the full ${submissionName.toLowerCase()} project, including all required features and functionality. The project has been thoroughly tested and is ready for review.`;
+                document.getElementById('submission-detail-tech').textContent = 'React, Node.js, MongoDB, Figma';
+                document.getElementById('submission-detail-features').textContent = 'Responsive design, improved UX, optimized functionality, mobile compatibility';
+                document.getElementById('submission-detail-testing').textContent = 'Cross-browser testing completed, mobile responsiveness verified, user acceptance testing passed';
+                document.getElementById('submission-detail-notes').textContent = 'Please pay special attention to the new functionality and responsive design. All user feedback has been incorporated.';
+                document.getElementById('submission-detail-current-status').textContent = 'Under Review';
+                document.getElementById('submission-detail-deadline').textContent = 'October 25, 2023';
+                document.getElementById('submission-detail-last-updated').textContent = 'October 20, 2023';
+                
+                // Set up contact owner button
+                document.getElementById('submission-contact-owner').setAttribute('data-user', 'Michael Johnson');
+                
+                openPage('submission-details-page');
+            });
+        });
+
+        // Submit Work Button
+        document.querySelectorAll('.submit-work-btn').forEach(button => {
+            button.addEventListener('click', () => {
+                const projectName = button.dataset.project;
+                document.getElementById('submit-project-name').textContent = projectName;
+                document.getElementById('preview-project-name').textContent = projectName;
+                
+                // Set current date
+                const now = new Date();
+                document.getElementById('preview-submission-date').textContent = now.toLocaleDateString();
+                
+                openPage('submit-project-page');
+            });
+        });
+
+        // Contact Applicant Button
+        document.querySelector('.contact-applicant-btn').addEventListener('click', () => {
+            const applicantName = document.getElementById('application-applicant-name').textContent;
+            document.getElementById('chat-user-name').textContent = applicantName;
+            document.getElementById('chat-user-fullname').textContent = applicantName;
+            document.getElementById('chat-user-status').textContent = 'Online';
+            document.getElementById('chat-user-avatar').textContent = applicantName.split(' ').map(n => n[0]).join('');
+            closePage('view-application-page');
+            openPage('chat-page');
+        });
+
+        // Contact Owner Button
+        document.querySelectorAll('.contact-owner-btn').forEach(button => {
+            button.addEventListener('click', (e) => {
+                e.stopPropagation(); // Prevent card click
+                const userName = button.dataset.user;
+                document.getElementById('chat-user-name').textContent = userName;
+                document.getElementById('chat-user-fullname').textContent = userName;
+                document.getElementById('chat-user-status').textContent = 'Online';
+                document.getElementById('chat-user-avatar').textContent = userName.split(' ').map(n => n[0]).join('');
+                openPage('chat-page');
+            });
+        });
+
+        // Message Submitter Button
+        document.getElementById('message-submitter-btn').addEventListener('click', () => {
+            const userName = document.getElementById('review-submitter-name').textContent;
+            document.getElementById('chat-user-name').textContent = userName;
+            document.getElementById('chat-user-fullname').textContent = userName;
+            document.getElementById('chat-user-status').textContent = 'Online';
+            document.getElementById('chat-user-avatar').textContent = userName.split(' ').map(n => n[0]).join('');
+            closePage('review-submission-page');
+            openPage('chat-page');
+        });
+
+        // View Project Details - Make entire project card clickable
+        document.querySelectorAll('.project-card').forEach(card => {
+            card.style.cursor = 'pointer';
+            card.addEventListener('click', (e) => {
+                // Don't trigger if clicking on the apply button
+                if (e.target.classList.contains('apply-btn') || e.target.closest('.apply-btn')) {
+                    return;
+                }
+                
+                const projectName = card.querySelector('.project-title').textContent;
+                const author = card.querySelector('.project-author span').textContent;
+                
+                document.getElementById('detail-project-title').textContent = projectName;
+                document.getElementById('detail-project-author').textContent = author;
+                document.getElementById('detail-project-date').textContent = 'October 15, 2023';
+                document.getElementById('detail-project-duration').textContent = '2-3 months';
+                document.getElementById('detail-project-description').textContent = card.querySelector('.project-description').textContent;
+                
+                // Set team size for group projects
+                if (card.querySelector('.project-type').textContent === 'Group Project') {
+                    document.getElementById('detail-team-size').textContent = projectApplications[projectName].needed + ' people needed';
+                } else {
+                    document.getElementById('detail-team-size').textContent = 'Solo project';
+                }
+                
+                openPage('project-detail-page');
+            });
+        });
+
+        // View User Profile with Privacy Check
+        document.querySelectorAll('.project-author, .member-avatar, .member-info h4, .message-sender').forEach(element => {
+            element.style.cursor = 'pointer';
+            element.addEventListener('click', (e) => {
+                e.stopPropagation(); // Prevent card click
+                const userName = e.currentTarget.dataset.user;
+                if (userName) {
+                    if (userPrivacySettings[userName] === "public") {
+                        // Show individual profile instead of current user's profile
+                        showUserProfile(userName);
+                    } else {
+                        openPage('private-profile-page');
+                    }
+                }
+            });
+        });
+
+        // Function to show individual user profiles
+        function showUserProfile(userName) {
+            // Create a dynamic profile page for the specific user
+            const profileData = {
+                'lisa-wong': {
+                    name: 'Lisa Wong',
+                    title: 'UI/UX Designer',
+                    location: 'San Francisco, CA',
+                    experience: '3 years',
+                    projects: '8 completed',
+                    rating: '4.9/5.0',
+                    specialties: 'UI Design, UX Research, Prototyping',
+                    skills: 'Figma, Sketch, Adobe XD, HTML, CSS, JavaScript'
+                },
+                'david-kim': {
+                    name: 'David Kim',
+                    title: 'Fullstack Developer',
+                    location: 'New York, NY',
+                    experience: '6 years',
+                    projects: '15 completed',
+                    rating: '4.7/5.0',
+                    specialties: 'React, Node.js, Python, Database Design',
+                    skills: 'JavaScript, Python, React, Node.js, MongoDB, PostgreSQL'
+                },
+                'marcus-johnson': {
+                    name: 'Marcus Johnson',
+                    title: 'Frontend Developer',
+                    location: 'Chicago, IL',
+                    experience: '4 years',
+                    projects: '12 completed',
+                    rating: '4.6/5.0',
+                    specialties: 'React, Vue.js, TypeScript, Responsive Design',
+                    skills: 'JavaScript, TypeScript, React, Vue.js, CSS, HTML'
+                },
+                'sarah-patel': {
+                    name: 'Sarah Patel',
+                    title: 'Data Scientist',
+                    location: 'Austin, TX',
+                    experience: '5 years',
+                    projects: '10 completed',
+                    rating: '4.8/5.0',
+                    specialties: 'Machine Learning, Data Analysis, Python',
+                    skills: 'Python, R, SQL, TensorFlow, Pandas, Scikit-learn'
+                },
+                'alex-chen': {
+                    name: 'Alex Chen',
+                    title: 'Mobile Developer',
+                    location: 'Seattle, WA',
+                    experience: '4 years',
+                    projects: '9 completed',
+                    rating: '4.5/5.0',
+                    specialties: 'React Native, iOS, Android, Cross-platform',
+                    skills: 'React Native, Swift, Kotlin, JavaScript, Firebase'
+                }
+            };
+
+            const userData = profileData[userName];
+            if (userData) {
+                // Update profile page with user data
+                document.getElementById('profile-page').innerHTML = `
+                    <div class="page-header">
+                        <h2 class="page-title">${userData.name}'s Profile</h2>
+                        <button class="back-button" onclick="closePage('profile-page')">← Back</button>
+                    </div>
+                    <div class="page-content">
+                        <div class="card">
+                            <div class="profile-dropdown-header">
+                                <div class="profile-dropdown-avatar">${userData.name.split(' ').map(n => n[0]).join('')}</div>
+                                <div class="profile-dropdown-info">
+                                    <h3>${userData.name}</h3>
+                                    <p>${userData.title}</p>
+                                    <p>${userData.location}</p>
+                                </div>
+                            </div>
+                            <div class="profile-details">
+                                <div class="profile-detail-item">
+                                    <span class="profile-detail-label">Experience:</span>
+                                    <span class="profile-detail-value">${userData.experience}</span>
+                                </div>
+                                <div class="profile-detail-item">
+                                    <span class="profile-detail-label">Projects Completed:</span>
+                                    <span class="profile-detail-value">${userData.projects}</span>
+                                </div>
+                                <div class="profile-detail-item">
+                                    <span class="profile-detail-label">Rating:</span>
+                                    <span class="profile-detail-value">${userData.rating}</span>
+                                </div>
+                                <div class="profile-detail-item">
+                                    <span class="profile-detail-label">Specialties:</span>
+                                    <span class="profile-detail-value">${userData.specialties}</span>
+                                </div>
+                                <div class="profile-detail-item">
+                                    <span class="profile-detail-label">Skills:</span>
+                                    <span class="profile-detail-value">${userData.skills}</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card mt-3">
+                            <div class="card-header">
+                                <h2 class="card-title">Bio/Introduction</h2>
+                            </div>
+                            <p>Experienced ${userData.title.toLowerCase()} with ${userData.experience} of experience. Passionate about creating innovative solutions and collaborating on meaningful projects.</p>
+                        </div>
+                    </div>
+                `;
+                openPage('profile-page');
+            }
+        }
+
+        // View Application Details (Applications Sent)
+        document.querySelectorAll('.application-sent-item').forEach(item => {
+            item.addEventListener('click', () => {
+                openPage('application-details-page');
+            });
+        });
+
+        // Project Filtering
+        document.getElementById('project-type-filter').addEventListener('change', filterProjects);
+        document.getElementById('skill-level-filter').addEventListener('change', filterProjects);
+        document.getElementById('field-filter').addEventListener('change', filterProjects);
+
+        function filterProjects() {
+            const typeValue = document.getElementById('project-type-filter').value;
+            const levelValue = document.getElementById('skill-level-filter').value;
+            const fieldValue = document.getElementById('field-filter').value;
+            
+            document.querySelectorAll('.project-card').forEach(card => {
+                const cardType = card.dataset.type;
+                const cardLevel = card.dataset.level;
+                const cardField = card.dataset.field;
+                
+                const typeMatch = typeValue === 'all' || cardType === typeValue;
+                const levelMatch = levelValue === 'all' || cardLevel === levelValue;
+                const fieldMatch = fieldValue === 'all' || cardField === fieldValue;
+                
+                if (typeMatch && levelMatch && fieldMatch) {
+                    card.style.display = 'block';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        }
+
+        // Form Submissions
+        document.getElementById('application-form').addEventListener('submit', (e) => {
+            e.preventDefault();
+            alert('Application submitted successfully!');
+            closePage('application-page');
+        });
+
+        document.getElementById('discussion-form').addEventListener('submit', (e) => {
+            e.preventDefault();
+            alert('Discussion posted successfully!');
+            closePage('discussion-page');
+        });
+
+        document.getElementById('greeting-form').addEventListener('submit', (e) => {
+            e.preventDefault();
+            alert('Greeting sent successfully!');
+            closePage('greeting-page');
+            // Open chat page with the user
+            const userName = document.getElementById('connection-name').textContent;
+            document.getElementById('chat-user-name').textContent = userName;
+            document.getElementById('chat-user-fullname').textContent = userName;
+            document.getElementById('chat-user-status').textContent = 'Online';
+            document.getElementById('chat-user-avatar').textContent = userName.split(' ').map(n => n[0]).join('');
+            openPage('chat-page');
+        });
+
+        document.getElementById('edit-profile-form').addEventListener('submit', (e) => {
+            e.preventDefault();
+            alert('Profile updated successfully!');
+            closePage('edit-profile-page');
+        });
+
+        document.getElementById('settings-form').addEventListener('submit', (e) => {
+            e.preventDefault();
+            alert('Settings saved successfully!');
+            closePage('settings-page');
+        });
+
+        document.getElementById('add-project-form').addEventListener('submit', (e) => {
+            e.preventDefault();
+            alert('Project added successfully!');
+            closePage('add-project-page');
+        });
+
+        document.getElementById('project-submission-form').addEventListener('submit', (e) => {
+            e.preventDefault();
+            alert('Project submitted successfully for review!');
+            closePage('submit-project-page');
+        });
+
+        document.getElementById('project-review-form').addEventListener('submit', (e) => {
+            e.preventDefault();
+            alert('Review submitted successfully!');
+            closePage('review-submission-page');
+        });
+
+        document.querySelector('.comment-form').addEventListener('submit', (e) => {
+            e.preventDefault();
+            const commentText = e.target.querySelector('textarea').value;
+            if (commentText.trim()) {
+                const commentItem = document.createElement('div');
+                commentItem.className = 'comment-item';
+                commentItem.innerHTML = `
+                    <div class="comment-author">You</div>
+                    <div class="comment-content">${commentText}</div>
+                `;
+                document.querySelector('.comment-section').insertBefore(commentItem, e.target);
+                e.target.reset();
+            }
+        });
+
+        // Chat functionality
+        document.querySelector('.chat-input button').addEventListener('click', sendMessage);
+        document.querySelector('.chat-input input').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                sendMessage();
+            }
+        });
+
+        function sendMessage() {
+            const input = document.querySelector('.chat-input input');
+            const message = input.value.trim();
+            if (message) {
+                const messageElement = document.createElement('div');
+                messageElement.className = 'message sent';
+                const now = new Date();
+                const time = now.getHours() + ':' + (now.getMinutes() < 10 ? '0' : '') + now.getMinutes();
+                messageElement.innerHTML = `
+                    <div class="message-content">${message}</div>
+                    <div class="message-time">${time}</div>
+                `;
+                document.querySelector('.chat-messages').appendChild(messageElement);
+                input.value = '';
+                
+                // Scroll to bottom
+                document.querySelector('.chat-messages').scrollTop = document.querySelector('.chat-messages').scrollHeight;
+                
+                // Simulate reply after a short delay
+                setTimeout(() => {
+                    const replies = [
+                        "Thanks for your message!",
+                        "I'll get back to you soon.",
+                        "That sounds good to me.",
+                        "Let me check my schedule and get back to you."
+                    ];
+                    const reply = replies[Math.floor(Math.random() * replies.length)];
+                    
+                    const replyElement = document.createElement('div');
+                    replyElement.className = 'message received';
+                    const replyTime = new Date();
+                    const replyTimeStr = replyTime.getHours() + ':' + (replyTime.getMinutes() < 10 ? '0' : '') + replyTime.getMinutes();
+                    replyElement.innerHTML = `
+                        <div class="message-content">${reply}</div>
+                        <div class="message-time">${replyTimeStr}</div>
+                    `;
+                    document.querySelector('.chat-messages').appendChild(replyElement);
+                    
+                    // Scroll to bottom again
+                    document.querySelector('.chat-messages').scrollTop = document.querySelector('.chat-messages').scrollHeight;
+                }, 1000 + Math.random() * 2000);
+            }
+        }
+
+        // Page Navigation Functions - Optimized for performance
+        function openPage(pageId) {
+            // Use requestAnimationFrame for smooth transitions
+            requestAnimationFrame(() => {
+            document.getElementById(pageId).classList.add('active');
+            document.querySelector('.footer-content').style.display = 'none';
+            });
+        }
+
+        function closePage(pageId) {
+            // Use requestAnimationFrame for smooth transitions
+            requestAnimationFrame(() => {
+            document.getElementById(pageId).classList.remove('active');
+            document.querySelector('.footer-content').style.display = 'block';
+            });
+        }
+
+        function switchToTab(tabName) {
+            // Use requestAnimationFrame for smooth transitions
+            requestAnimationFrame(() => {
+            // Remove active class from all tabs and contents
+            document.querySelectorAll('.tab-button').forEach(btn => btn.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+            
+            // Add active class to target tab and content
+                const targetTab = document.querySelector(`[data-tab="${tabName}"]`);
+                const targetContent = document.getElementById(tabName);
+                
+                if (targetTab && targetContent) {
+                    targetTab.classList.add('active');
+                    targetContent.classList.add('active');
+                }
+            });
+        }
+
+        // Debounce function to prevent rapid clicking
+        function debounce(func, wait) {
+            let timeout;
+            return function executedFunction(...args) {
+                const later = () => {
+                    clearTimeout(timeout);
+                    func(...args);
+                };
+                clearTimeout(timeout);
+                timeout = setTimeout(later, wait);
+            };
+        }
+
+        // Throttle function for performance
+        function throttle(func, limit) {
+            let inThrottle;
+            return function() {
+                const args = arguments;
+                const context = this;
+                if (!inThrottle) {
+                    func.apply(context, args);
+                    inThrottle = true;
+                    setTimeout(() => inThrottle = false, limit);
+                }
+            };
+        }
+
+        // Toggle team size field based on collaboration type
+        function toggleTeamSize() {
+            const collaborationType = document.getElementById('collaborationType').value;
+            const teamSizeGroup = document.getElementById('teamSizeGroup');
+            
+            if (collaborationType === 'group') {
+                teamSizeGroup.style.display = 'block';
+            } else {
+                teamSizeGroup.style.display = 'none';
+            }
+        }
+
+        // Initialize applicant count on project cards
+        function initApplicantCount() {
+            document.querySelectorAll('.project-card').forEach(card => {
+                const projectTitle = card.querySelector('.project-title').textContent;
+                if (projectApplications[projectTitle] && card.querySelector('.project-type').textContent === 'Group Project') {
+                    const applicantInfo = document.createElement('div');
+                    applicantInfo.className = 'applicant-count';
+                    const needed = projectApplications[projectTitle].needed;
+                    const applied = projectApplications[projectTitle].applicants;
+                    applicantInfo.innerHTML = `<span>${applied}</span> applied out of <span>${needed}</span> needed`;
+                    
+                    // Insert after project description
+                    const projectDescription = card.querySelector('.project-description');
+                    projectDescription.parentNode.insertBefore(applicantInfo, projectDescription.nextSibling);
+                }
+            });
+        }
+
+        // Make overview stat cards clickable
+        document.getElementById('active-projects-stat').addEventListener('click', () => {
+            switchToTab('find-projects');
+        });
+
+        document.getElementById('applications-sent-stat').addEventListener('click', () => {
+            switchToTab('applications');
+        });
+
+        document.getElementById('connections-stat').addEventListener('click', () => {
+            switchToTab('community');
+        });
+
+        document.getElementById('community-posts-stat').addEventListener('click', () => {
+            switchToTab('community');
+        });
+
+        // Make recent activity cards clickable
+        document.getElementById('activity-1').addEventListener('click', () => {
+            // E-commerce Website Redesign - Pending Review
+            switchToTab('applications');
+        });
+
+        document.getElementById('activity-2').addEventListener('click', () => {
+            // Mobile App Development - Accepted
+            switchToTab('applications');
+        });
+
+        document.getElementById('activity-3').addEventListener('click', () => {
+            // Data Visualization Dashboard - Not Selected
+            switchToTab('applications');
+        });
+
+        document.getElementById('activity-4').addEventListener('click', () => {
+            // New Connection Request
+            switchToTab('messages');
+        });
+
+        // Comprehensive button event listeners
+        function initializeAllButtons() {
+            // Add cursor pointer to all clickable elements
+            document.querySelectorAll('.activity-item, .stat-card, .project-card, .member-item, .discussion-item, .message-item, .portfolio-item').forEach(item => {
+                item.style.cursor = 'pointer';
+            });
+
+            // Add immediate response to all buttons
+            document.querySelectorAll('button').forEach(button => {
+                // Add visual feedback on click
+                button.addEventListener('mousedown', function() {
+                    this.style.transform = 'scale(0.98)';
+                    this.style.transition = 'transform 0.1s ease';
+                });
+                
+                button.addEventListener('mouseup', function() {
+                    this.style.transform = 'scale(1)';
+                });
+                
+                button.addEventListener('mouseleave', function() {
+                    this.style.transform = 'scale(1)';
+                });
+            });
+
+            // Ensure all form buttons work
+            document.querySelectorAll('form').forEach(form => {
+                form.addEventListener('submit', function(e) {
+                    e.preventDefault();
+                    // Add loading state
+                    const submitBtn = form.querySelector('button[type="submit"]');
+                    if (submitBtn) {
+                        const originalText = submitBtn.textContent;
+                        submitBtn.textContent = 'Processing...';
+                        submitBtn.disabled = true;
+                        
+                        // Simulate processing
+                        setTimeout(() => {
+                            submitBtn.textContent = originalText;
+                            submitBtn.disabled = false;
+                            alert('Form submitted successfully!');
+                        }, 1000);
+                    }
+                });
+            });
+
+            // Add missing button handlers
+            addMissingButtonHandlers();
+        }
+
+        function addMissingButtonHandlers() {
+            // Logout button
+            document.querySelector('.logout').addEventListener('click', function(e) {
+                e.stopPropagation();
+                if (confirm('Are you sure you want to logout?')) {
+                    alert('Logged out successfully!');
+                    // Reset to overview tab
+                    switchToTab('overview');
+                }
+            });
+
+            // Add to Portfolio buttons
+            document.querySelectorAll('.btn-success').forEach(btn => {
+                if (btn.textContent.includes('Add to Portfolio')) {
+                    btn.addEventListener('click', function(e) {
+                        e.stopPropagation();
+                        alert('Project added to portfolio successfully!');
+                    });
+                }
+            });
+
+            // Decline buttons
+            document.querySelectorAll('.btn-danger').forEach(btn => {
+                if (btn.textContent.includes('Decline')) {
+                    btn.addEventListener('click', function(e) {
+                        e.stopPropagation();
+                        if (confirm('Are you sure you want to decline this request?')) {
+                            alert('Request declined.');
+                            this.closest('.message-item, .activity-item').style.opacity = '0.5';
+                        }
+                    });
+                }
+            });
+
+            // Accept buttons
+            document.querySelectorAll('.btn-success').forEach(btn => {
+                if (btn.textContent.includes('Accept')) {
+                    btn.addEventListener('click', function(e) {
+                        e.stopPropagation();
+                        alert('Request accepted successfully!');
+                        this.closest('.message-item, .activity-item').style.opacity = '0.5';
+                    });
+                }
+            });
+
+            // View Project Details buttons
+            document.querySelectorAll('.btn-secondary').forEach(btn => {
+                if (btn.textContent.includes('View Project Details') || btn.textContent.includes('View Details')) {
+                    btn.addEventListener('click', function(e) {
+                        e.stopPropagation();
+                        // Find the project name from context
+                        const projectName = this.closest('.activity-item, .submission-item, .review-item')?.querySelector('.activity-project, .submission-title, .review-title')?.textContent || 'Project';
+                        document.getElementById('detail-project-title').textContent = projectName;
+                        document.getElementById('detail-project-author').textContent = 'Project Owner';
+                        document.getElementById('detail-project-date').textContent = 'October 15, 2023';
+                        document.getElementById('detail-project-duration').textContent = '2-3 months';
+                        document.getElementById('detail-project-description').textContent = `Project details for ${projectName}`;
+                        document.getElementById('detail-team-size').textContent = 'Solo project';
+                        openPage('project-detail-page');
+                    });
+                }
+            });
+
+            // Contact buttons without data-user attribute
+            document.querySelectorAll('.btn-secondary, .btn-primary').forEach(btn => {
+                if (btn.textContent.includes('Contact') && !btn.hasAttribute('data-user')) {
+                    btn.addEventListener('click', function(e) {
+                        e.stopPropagation();
+                        const contactName = this.textContent.replace('Contact ', '').replace(' Owner', '').replace(' Applicant', '').replace(' Designer', '');
+                        document.getElementById('chat-user-name').textContent = contactName;
+                        document.getElementById('chat-user-fullname').textContent = contactName;
+                        document.getElementById('chat-user-status').textContent = 'Online';
+                        document.getElementById('chat-user-avatar').textContent = contactName.split(' ').map(n => n[0]).join('');
+                        openPage('chat-page');
+                    });
+                }
+            });
+
+            // Reply buttons
+            document.querySelectorAll('.reply-btn').forEach(btn => {
+                btn.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    const userName = this.dataset.user;
+                    document.getElementById('chat-user-name').textContent = userName;
+                    document.getElementById('chat-user-fullname').textContent = userName;
+                    document.getElementById('chat-user-status').textContent = 'Online';
+                    document.getElementById('chat-user-avatar').textContent = userName.split(' ').map(n => n[0]).join('');
+                    openPage('chat-page');
+                });
+            });
+
+            // Accept/Decline Application buttons
+            document.querySelectorAll('.btn-success, .btn-danger').forEach(btn => {
+                if (btn.textContent.includes('Application')) {
+                    btn.addEventListener('click', function(e) {
+                        e.stopPropagation();
+                        const action = this.textContent.includes('Accept') ? 'accepted' : 'declined';
+                        alert(`Application ${action} successfully!`);
+                        this.closest('.card').style.opacity = '0.7';
+                    });
+                }
+            });
+
+            // Join Discussion buttons
+            document.querySelectorAll('.join-discussion-btn').forEach(btn => {
+                btn.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    const discussionTopic = btn.dataset.discussion;
+                    let title, author, content;
+                    
+                    switch(discussionTopic) {
+                        case 'responsive-design':
+                            title = 'Best practices for responsive web design in 2023';
+                            author = 'Lisa Wong • 2 days ago';
+                            content = 'What are the current best practices for creating responsive websites that work well across all devices? I\'m particularly interested in modern CSS techniques and how they compare to framework-based approaches.';
+                            break;
+                        case 'react-state':
+                            title = 'How to effectively manage state in large React applications?';
+                            author = 'David Kim • 5 days ago';
+                            content = 'I\'m working on a large-scale React application and struggling with state management. What solutions have you found effective for managing complex state? Redux, Context API, or something else?';
+                            break;
+                        case 'fullstack-transition':
+                            title = 'Tips for transitioning from frontend to fullstack development';
+                            author = 'Marcus Johnson • 1 week ago';
+                            content = 'I\'ve been a frontend developer for 5 years and want to transition to fullstack. What backend technologies would complement my existing React/JavaScript skills? Any recommended learning paths?';
+                            break;
+                    }
+                    
+                    document.getElementById('thread-title').textContent = title;
+                    document.getElementById('thread-meta').textContent = 'Posted by: ' + author;
+                    document.getElementById('thread-content').textContent = content;
+                    document.getElementById('discussion-thread-title').textContent = title;
+                    
+                    openPage('discussion-thread-page');
+                });
+            });
+        }
+
+        // Initialize on DOM load
+        document.addEventListener('DOMContentLoaded', function() {
+            initApplicantCount();
+            initializeAllButtons();
+        });
+    </script>
+</body>
+</html>
