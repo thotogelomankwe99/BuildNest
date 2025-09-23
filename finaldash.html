@@ -1,0 +1,3307 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BuildNest - Collaborative Development Platform</title>
+    <style>
+        :root {
+            --primary: #7C3AED;
+            --primary-dark: #6D28D9;
+            --secondary: #0EA5E9;
+            --accent: #F59E0B;
+            --accent-light: #FCD34D;
+            --dark: #000;
+            --gray: #212121;
+            --light: #F1F5F9;
+            --white: #FFFFFF;
+            --success: #10B981;
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            --transition: all 0.3s ease;
+        }
+      
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #e3f2fd 0%, #f3e5f5 50%, #fff3e0 100%);
+            color: #2d3748;
+            line-height: 1.6;
+            min-height: 100vh;
+            transition: var(--transition);
+        }
+
+        /* Dark theme styles */
+        body.theme-dark {
+            background: linear-gradient(135deg, #2d3748 0%, #4a5568 50%, #718096 100%);
+            color: #f7fafc;
+        }
+
+        body.theme-dark .header {
+            background: #2d3748;
+        }
+
+        body.theme-dark .nav-tabs {
+            background: #2d3748;
+            border-bottom-color: #4a5568;
+        }
+
+        body.theme-dark .tab-button {
+            color: #cbd5e0;
+        }
+
+        body.theme-dark .tab-button:hover,
+        body.theme-dark .tab-button.active {
+            color: #63b3ed;
+            background: #4a5568;
+        }
+
+        body.theme-dark .card,
+        body.theme-dark .guide {
+            background: #2d3748;
+            color: #f7fafc;
+            border-color: #4a5568;
+        }
+
+        body.theme-dark .form-input,
+        body.theme-dark .form-textarea,
+        body.theme-dark .form-select {
+            background: #4a5568;
+            color: #f7fafc;
+            border-color: #718096;
+        }
+
+        body.theme-dark .form-input:focus,
+        body.theme-dark .form-textarea:focus,
+        body.theme-dark .form-select:focus {
+            border-color: #63b3ed;
+            box-shadow: 0 0 0 3px rgba(99, 179, 237, 0.1);
+        }
+
+        body.theme-dark .stat-card {
+            background: #2d3748;
+            color: #f7fafc;
+        }
+
+        body.theme-dark .activity-item {
+            background: #2d3748;
+            border-color: #4a5568;
+        }
+
+        body.theme-dark .project-card {
+            background: #2d3748;
+            border-color: #4a5568;
+        }
+
+        body.theme-dark .footer {
+            background: #2d3748;
+            color: #f7fafc;
+        }
+
+        body.theme-dark .footer-column a {
+            color: #f7fafc;
+        }
+
+        /* Header */
+        .header {
+            background: var(--light);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+            padding: 1rem 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary);
+            margin: 20px;
+        }
+
+        .logo img{
+            width: 50px;
+            height: 50px;
+        }
+
+        .user-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .user-profile-dropdown {
+            position: relative;
+        }
+
+        .user-profile-trigger {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            cursor: pointer;
+            padding: 0.5rem;
+            border-radius: 12px;
+            transition: all 0.3s ease;
+            background:rgba(218, 182, 229, 0.1);
+            border: none;
+        }
+
+        .user-profile-trigger:hover {
+            background:rgba(218, 182, 229, 0.1);
+        }
+
+        .user-avatar {
+            width: 45px;
+            height: 45px;
+            background: var(--primary);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+            font-size: 1.1rem;
+        }
+
+        .user-info h3 {
+            font-size: 1rem;
+            color:var(--dark) ;
+            margin-bottom: 0.2rem;
+        }
+
+        .user-info p {
+            font-size: 0.85rem;
+            color: var(--gray);
+        }
+
+        .dropdown-arrow {
+            color: var(--primary);
+            transition: transform 0.3s ease;
+        }
+
+        .user-profile-trigger.active .dropdown-arrow {
+            transform: rotate(180deg);
+        }
+
+        .profile-dropdown {
+            position: absolute;
+            top: 100%;
+            right: 0;
+            width: 350px;
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            border: 1px solid #e2e8f0;
+            padding: 1.5rem;
+            z-index: 1000;
+            display: none;
+            animation: slideDown 0.3s ease;
+        }
+
+        .profile-dropdown.show {
+            display: block;
+        }
+
+        .profile-dropdown-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .profile-dropdown-avatar {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, #1976d2, #7b1fa2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.5rem;
+            font-weight: 600;
+        }
+
+        .profile-dropdown-info h3 {
+            font-size: 1.1rem;
+            color: #2d3748;
+            margin-bottom: 0.25rem;
+        }
+
+        .profile-dropdown-info p {
+            font-size: 0.85rem;
+            color: #718096;
+            margin-bottom: 0.25rem;
+        }
+
+        .profile-details {
+            margin-bottom: 1rem;
+            padding: 1rem;
+            background: #f8fafc;
+            border-radius: 8px;
+        }
+
+        .profile-detail-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.5rem;
+            font-size: 0.85rem;
+        }
+
+        .profile-detail-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .profile-detail-label {
+            font-weight: 500;
+            color: #4a5568;
+        }
+
+        .profile-detail-value {
+            color: #718096;
+        }
+
+        .profile-dropdown-menu {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .profile-menu-item {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.75rem;
+            border-radius: 8px;
+            text-decoration: none;
+            color: #4a5568;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            border: none;
+            background: none;
+            width: 100%;
+            text-align: left;
+        }
+
+        .profile-menu-item:hover {
+            background: #f7fafc;
+            color: #1976d2;
+        }
+
+        .profile-menu-item.logout {
+            color: #e53e3e;
+            border-top: 1px solid #e2e8f0;
+            margin-top: 0.5rem;
+            padding-top: 1rem;
+        }
+
+        .profile-menu-item.logout:hover {
+            background: #fed7d7;
+        }
+
+        .notifications {
+            position: relative;
+            background: rgba(255, 255, 255, 0.1);
+            border: none;
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            color: white;
+        }
+
+        .notifications:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .notification-badge {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            background: #ff5722;
+            color: white;
+            font-size: 0.7rem;
+            padding: 0.2rem 0.4rem;
+            border-radius: 10px;
+            min-width: 18px;
+            text-align: center;
+        }
+
+        /* Navigation Tabs */
+        .nav-tabs {
+            background: white;
+            border-bottom: 2px solid #e2e8f0;
+            padding: 0;
+        }
+
+        .nav-tabs-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            display: flex;
+            gap: 0;
+            overflow-x: auto;
+        }
+
+        .tab-button {
+            background: none;
+            border: none;
+            padding: 1.2rem 1.5rem;
+            font-size: 0.95rem;
+            font-weight: 500;
+            color: #718096;
+            cursor: pointer;
+            border-bottom: 3px solid transparent;
+            transition: all 0.3s ease;
+            position: relative;
+            white-space: nowrap;
+        }
+
+        .tab-button:hover {
+            color: #1976d2;
+            background: #f7fafc;
+        }
+
+        .tab-button.active {
+            color: #1976d2;
+            border-bottom-color: #1976d2;
+            background: #f7fafc;
+        }
+
+        /* Main Content */
+        .main-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+            min-height: calc(100vh - 200px);
+        }
+
+        .tab-content {
+            display: none;
+            animation: fadeIn 0.4s ease;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /*Project guide*/
+        .guide-title{
+            margin-bottom: 1.5rem;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .guide-steps li{
+            list-style-type: none;
+            padding:3px;
+            color: #000;
+        }
+        /* Create projects Cards */
+        .card, .guide {
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 4px 25px rgba(0, 0, 0, 0.08);
+            padding: 2rem;
+            margin-bottom: 2rem;
+            border: 1px solid #e2e8f0;
+           max-width: 100%;
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .card-title {
+            font-size: 1.4rem;
+            font-weight: 600;
+            color: #2d3748;
+        }
+
+        /* Overview Tab */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+            margin-top: 1.5rem;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 1.8rem;
+            border-radius: 16px;
+            box-shadow: 0 4px 25px rgba(0, 0, 0, 0.08);
+            border-left: 4px solid;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 35px rgba(0, 0, 0, 0.12);
+        }
+
+        .stat-card:nth-child(1) { border-left-color: #1976d2; }
+        .stat-card:nth-child(2) { border-left-color: #7b1fa2; }
+        .stat-card:nth-child(3) { border-left-color: #ff9800; }
+        .stat-card:nth-child(4) { border-left-color: #4caf50; }
+
+        .stat-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .stat-title {
+            color: #718096;
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        .stat-icon {
+            width: 45px;
+            height: 45px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.3rem;
+        }
+
+        .stat-card:nth-child(1) .stat-icon {
+            background: linear-gradient(135deg, #1976d2, #1565c0);
+            color: white;
+        }
+
+        .stat-card:nth-child(2) .stat-icon {
+            background: linear-gradient(135deg, #7b1fa2, #6a1b9a);
+            color: white;
+        }
+
+        .stat-card:nth-child(3) .stat-icon {
+            background: linear-gradient(135deg, #ff9800, #f57c00);
+            color: white;
+        }
+
+        .stat-card:nth-child(4) .stat-icon {
+            background: linear-gradient(135deg, #4caf50, #388e3c);
+            color: white;
+        }
+
+        .stat-value {
+            font-size: 2.2rem;
+            font-weight: 700;
+            color: #2d3748;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-change {
+            font-size: 0.85rem;
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+        }
+
+        .stat-change.positive { color: #4caf50; }
+        .stat-change.negative { color: #f44336; }
+
+        /* Activity Items */
+        .activity-item {
+            background: white;
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+            box-shadow: 0 2px 15px rgba(0, 0, 0, 0.05);
+            border: 1px solid #e2e8f0;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .activity-item:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            border-color: #1976d2;
+        }
+
+        .activity-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .activity-project {
+            font-weight: 600;
+            color: #2d3748;
+        }
+
+        .activity-status {
+            padding: 0.4rem 0.8rem;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+
+        .status-pending {
+            background: #fff3e0;
+            color: #e65100;
+        }
+
+        .status-accepted {
+            background: #e8f5e8;
+            color: #2e7d32;
+        }
+
+        .status-rejected {
+            background: #ffebee;
+            color: #c62828;
+        }
+
+        .status-new {
+            background: #e3f2fd;
+            color: #1565c0;
+        }
+
+        /* Forms */
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            color: #2d3748;
+        }
+
+        .form-input,
+        .form-textarea,
+        .form-select {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 0.95rem;
+            transition: all 0.3s ease;
+        }
+
+        .form-input:focus,
+        .form-textarea:focus,
+        .form-select:focus {
+            outline: none;
+            border-color: #1976d2;
+            box-shadow: 0 0 0 3px rgba(25, 118, 210, 0.1);
+        }
+
+        .form-textarea {
+            resize: vertical;
+            min-height: 120px;
+        }
+
+        /* Buttons */
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 8px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.1s ease;
+            text-decoration: none;
+            display: inline-block;
+            text-align: center;
+            font-size: 0.95rem;
+            user-select: none;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            outline: none;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn:active {
+            transform: scale(0.98);
+        }
+
+        .btn:focus {
+            outline: 2px solid #1976d2;
+            outline-offset: 2px;
+        }
+
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none !important;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #1976d2, #1565c0);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(25, 118, 210, 0.3);
+        }
+
+        .btn-secondary {
+            background: #2758d4;
+            color: #f5f7fa;
+        }
+
+        .btn-secondary:hover {
+            background: #91b7e0;
+        }
+
+        .btn-success {
+            background: #4caf50;
+            color: white;
+        }
+
+        .btn-danger {
+            background: #f44336;
+            color: white;
+        }
+
+        .btn-orange {
+            background: linear-gradient(135deg, #ff9800, #f57c00);
+            color: white;
+        }
+
+        .btn-orange:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(255, 152, 0, 0.3);
+        }
+
+        /* Skill Level Filters */
+        .skill-level-filters {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .skill-filter {
+            padding: 0.75rem 1.5rem;
+            border: 2px solid #e2e8f0;
+            border-radius: 25px;
+            background: white;
+            color: #4a5568;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+
+        .skill-filter:hover {
+            border-color: #1976d2;
+            color: #1976d2;
+        }
+
+        .skill-filter.active {
+            background: linear-gradient(135deg, #1976d2, #1565c0);
+            color: white;
+            border-color: transparent;
+        }
+
+        /* Field Filters */
+        .field-filters {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .field-filter {
+            padding: 0.5rem 1rem;
+            border: 2px solid #e2e8f0;
+            border-radius: 20px;
+            background: white;
+            color: #4a5568;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.85rem;
+        }
+
+        .field-filter:hover {
+            border-color: #7b1fa2;
+            color: #7b1fa2;
+        }
+
+        .field-filter.active {
+            background: linear-gradient(135deg, #7b1fa2, #6a1b9a);
+            color: white;
+            border-color: transparent;
+        }
+
+        /* Dropdown Filters */
+        .dropdown-filters {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .dropdown-filter {
+            min-width: 200px;
+        }
+
+        /* Skill Level Badges */
+        .skill-level {
+            padding: 0.4rem 0.8rem;
+            border-radius: 15px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .level-beginner {
+            background: #e8f5e8;
+            color: #2e7d32;
+            border: 1px solid #4caf50;
+        }
+
+        .level-intermediate {
+            background: #fff3e0;
+            color: #e65100;
+            border: 1px solid #ff9800;
+        }
+
+        .level-advanced {
+            background: #ffebee;
+            color: #c62828;
+            border: 1px solid #f44336;
+        }
+
+        /* Project Cards */
+        .projects-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 1.5rem;
+            margin-top: 1.5rem;
+        }
+
+        .project-card {
+            background: white;
+            border-radius: 16px;
+            padding: 1.5rem;
+            box-shadow: 0 4px 25px rgba(0, 0, 0, 0.08);
+            border: 1px solid #e2e8f0;
+            transition: all 0.3s ease;
+        }
+
+        .project-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 35px rgba(0, 0, 0, 0.12);
+        }
+
+        .project-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 1rem;
+        }
+
+        .project-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #2d3748;
+            margin-bottom: 0.5rem;
+        }
+
+        .project-badges {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            align-items: flex-end;
+        }
+
+        .project-type {
+            padding: 0.3rem 0.8rem;
+            border-radius: 15px;
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+
+        .type-solo {
+            background: #e3f2fd;
+            color: #1565c0;
+        }
+
+        .type-group {
+            background: #f3e5f5;
+            color: #6a1b9a;
+        }
+
+        .project-field {
+            padding: 0.3rem 0.8rem;
+            border-radius: 15px;
+            font-size: 0.75rem;
+            font-weight: 500;
+            background: #fff3e0;
+            color: #e65100;
+        }
+
+        .project-description {
+            color: #718096;
+            margin-bottom: 1rem;
+            line-height: 1.6;
+        }
+
+        .project-tech {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .tech-badge {
+            padding: 0.3rem 0.7rem;
+            background: #f7fafc;
+            color: #4a5568;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            border: 1px solid #e2e8f0;
+        }
+
+        .project-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-top: 1rem;
+            border-top: 1px solid #e2e8f0;
+        }
+
+        .project-author {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.85rem;
+            color: #718096;
+            cursor: pointer;
+        }
+
+        .author-avatar {
+            width: 30px;
+            height: 30px;
+            background: linear-gradient(135deg, #1976d2, #7b1fa2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        /* NEW STYLES FOR IMPROVEMENTS */
+        .applicant-count {
+            font-size: 0.85rem;
+            color: #718096;
+            margin-top: 0.5rem;
+        }
+        
+        .applicant-count span {
+            font-weight: 600;
+            color: #1976d2;
+        }
+        
+        .private-profile-notice {
+            background: #fff3e0;
+            border: 1px solid #ff9800;
+            border-radius: 8px;
+            padding: 1.5rem;
+            text-align: center;
+            margin: 2rem 0;
+        }
+        
+        .submission-form {
+            margin-top: 1.5rem;
+        }
+        
+        .submission-preview {
+            background: #f8fafc;
+            border-radius: 8px;
+            padding: 1rem;
+            margin: 1rem 0;
+        }
+        
+        .review-actions {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+
+        /* Submission and Review Cards */
+        .submission-item, .review-item {
+            background: white;
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+            box-shadow: 0 2px 15px rgba(0, 0, 0, 0.05);
+            border: 1px solid #e2e8f0;
+            transition: all 0.3s ease;
+        }
+
+        .submission-item:hover, .review-item:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .submission-header, .review-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .submission-title, .review-title {
+            font-weight: 600;
+            color: #2d3748;
+            font-size: 1.1rem;
+        }
+
+        .submission-meta, .review-meta {
+            font-size: 0.85rem;
+            color: #718096;
+        }
+
+        /* Community */
+        .community-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 2rem;
+            margin-top: 1.5rem;
+        }
+
+        .discussion-item {
+            background: white;
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+            box-shadow: 0 2px 15px rgba(0, 0, 0, 0.05);
+            border: 1px solid #e2e8f0;
+        }
+
+        .discussion-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .discussion-title {
+            font-weight: 600;
+            color: #2d3748;
+            font-size: 1.1rem;
+        }
+
+        .discussion-meta {
+            font-size: 0.85rem;
+            color: #718096;
+        }
+
+        .discussion-content {
+            color: #4a5568;
+            line-height: 1.6;
+            margin-bottom: 1rem;
+        }
+
+        .discussion-actions {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        .discussion-stats {
+            display: flex;
+            gap: 1rem;
+            font-size: 0.85rem;
+            color: #718096;
+        }
+
+        .comment-item {
+            background: #f8fafc;
+            border-radius: 8px;
+            padding: 1rem;
+            margin: 0.5rem 0;
+            border-left: 3px solid #1976d2;
+        }
+
+        .comment-author {
+            font-weight: 500;
+            color: #2d3748;
+            margin-bottom: 0.5rem;
+        }
+
+        .comment-content {
+            color: #4a5568;
+            line-height: 1.5;
+        }
+
+        .active-members {
+            background: white;
+            border-radius: 16px;
+            padding: 1.5rem;
+            box-shadow: 0 4px 25px rgba(0, 0, 0, 0.08);
+            border: 1px solid #e2e8f0;
+            height: fit-content;
+        }
+
+        .member-item {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+            transition: all 0.3s ease;
+            border: 1px solid #e2e8f0;
+           box-shadow: 0 4px 25px rgba(0, 0, 0, 0.01);
+        }
+
+        .member-item:hover {
+            background: #f8fafc;
+        }
+
+        .member-avatar {
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, #1976d2, #7b1fa2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .member-info h4 {
+            color: #2d3748;
+            margin-bottom: 0.25rem;
+            cursor: pointer;
+        }
+
+        .member-info p {
+            font-size: 0.85rem;
+            color: #718096;
+        }
+
+        /* Messages */
+        .message-item {
+            background: white;
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+            box-shadow: 0 2px 15px rgba(0, 0, 0, 0.05);
+            border: 1px solid #e2e8f0;
+        }
+
+        .message-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .message-sender {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            cursor: pointer;
+        }
+
+        .sender-avatar {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, #1976d2, #7b1fa2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+        }
+
+        .message-time {
+            font-size: 0.85rem;
+            color: #718096;
+        }
+
+        .message-content {
+            color: #4a5568;
+            line-height: 1.6;
+            margin-bottom: 1rem;
+        }
+
+        .message-actions {
+            display: flex;
+            gap: 0.75rem;
+        }
+
+        /* Portfolio */
+        .portfolio-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-top: 1.5rem;
+        }
+
+        .portfolio-item {
+            background: white;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 4px 25px rgba(0, 0, 0, 0.08);
+            border: 1px solid #e2e8f0;
+            transition: all 0.3s ease;
+        }
+
+        .portfolio-item:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 35px rgba(0, 0, 0, 0.12);
+        }
+
+        .portfolio-image {
+            width: 100%;
+            height: 200px;
+            background: linear-gradient(135deg, #1976d2, #7b1fa2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 3rem;
+        }
+
+        .portfolio-content {
+            padding: 1.5rem;
+        }
+
+        .portfolio-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #2d3748;
+            margin-bottom: 0.5rem;
+        }
+
+        .portfolio-description {
+            color: #718096;
+            margin-bottom: 1rem;
+            line-height: 1.6;
+        }
+
+        .portfolio-links {
+            display: flex;
+            gap: 0.75rem;
+        }
+
+        .portfolio-link {
+            padding: 0.5rem 1rem;
+            background: #f7fafc;
+            color: #4a5568;
+            text-decoration: none;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            transition: all 0.3s ease;
+        }
+
+        .portfolio-link:hover {
+            background: #edf2f7;
+            color: #1976d2;
+        }
+
+        /* Modal */
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 10000;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 16px;
+            padding: 2rem;
+            max-width: 600px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .modal-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: #2d3748;
+            margin-bottom: 0.5rem;
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            color: #718096;
+            cursor: pointer;
+            padding: 0.5rem;
+            border-radius: 50%;
+            transition: all 0.3s ease;
+        }
+
+        .modal-close:hover {
+            background: #f7fafc;
+            color: #2d3748;
+        }
+
+                 /* Footer */
+        footer {
+            background-color: var(--light);
+            color: var(--dark);
+            padding:1rem 2rem ;
+            margin: 0 auto;
+
+        }
+
+        .footer-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(20px, 1fr));
+            margin-bottom: 2rem;
+        }
+
+        .footer-column h3 {
+            color: var(--accent);
+            margin-bottom: 1.5rem;
+            font-size: 1.1rem;
+        }
+        .footer-column span h3 {
+            color: var(--primary);
+        }
+        .footer-p{
+            margin: 20px;
+        }
+
+        .footer-column ul {
+            list-style: none;
+        }
+
+        .footer-column ul li {
+            margin-bottom: 0.25rem;
+        }
+
+        .footer-column a {
+            color: var(--dark);
+            text-decoration: none;
+            transition: var(--transition);
+        }
+
+        .footer-column a:hover {
+            color: var(--accent-light);
+        }
+
+        .copyright {
+            width: 100%;
+            text-align: center;
+            padding-top: 0.5rem;
+            border-top: 1px solid #000;
+        }
+
+        /* NEW STYLES FOR PAGES */
+        .page {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: white;
+            z-index: 1000;
+            overflow-y: auto;
+            padding: 2rem;
+        }
+
+        .page.active {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .page-title {
+            font-size: 1.8rem;
+            font-weight: 600;
+            color: #2d3748;
+        }
+
+        .page-content {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .back-button {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            background: #f7fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            color: #4a5568;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .back-button:hover {
+            background: #edf2f7;
+            color: #2d3748;
+        }
+
+        /* Chat Interface */
+        .chat-container {
+            display: flex;
+            flex-direction: column;
+            height: 500px;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        .chat-header {
+            padding: 1rem;
+            background: #f7fafc;
+            border-bottom: 1px solid #e2e8f0;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .chat-messages {
+            flex: 1;
+            padding: 1rem;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .message {
+            max-width: 70%;
+            padding: 0.75rem 1rem;
+            border-radius: 18px;
+            position: relative;
+        }
+
+        .message.received {
+            align-self: flex-start;
+            background: #f1f5f9;
+            color: #334155;
+            border: 1px solid #e2e8f0;
+        }
+
+        .message.sent {
+            align-self: flex-end;
+            background: #3b82f6;
+            color: white;
+        }
+
+        .message-time {
+            font-size: 0.7rem;
+            margin-top: 0.25rem;
+            opacity: 0.7;
+        }
+
+        .chat-input {
+            display: flex;
+            padding: 1rem;
+            border-top: 1px solid #e2e8f0;
+            background: #f7fafc;
+        }
+
+        .chat-input input {
+            flex: 1;
+            padding: 0.75rem 1rem;
+            border: 1px solid #e2e8f0;
+            border-radius: 20px;
+            outline: none;
+        }
+
+        .chat-input button {
+            margin-left: 0.5rem;
+            padding: 0.75rem 1.5rem;
+            background: #3b82f6;
+            color: white;
+            border: none;
+            border-radius: 20px;
+            cursor: pointer;
+        }
+
+        /* Comment Section */
+        .comment-section {
+            margin-top: 1.5rem;
+            border-top: 1px solid #e2e8f0;
+            padding-top: 1.5rem;
+        }
+
+        .comment-form {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .comment-item {
+    background: #f8fafc;
+    border-radius: 8px;
+    padding: 1rem;
+    margin: 0.5rem 0;
+    border-left: 3px solid #1976d2;
+}
+
+.comment-author {
+    font-weight: 600;
+    color: #2d3748;
+    margin-bottom: 0.5rem;
+}
+
+.comment-content {
+    color: #4a5568;
+    line-height: 1.5;
+}
+
+        /* Empty States */
+        .empty-state {
+            text-align: center;
+            padding: 3rem 2rem;
+            color: #718096;
+        }
+        
+        .empty-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            opacity: 0.5;
+        }
+        
+        .empty-state h3 {
+            margin-bottom: 0.5rem;
+            color: #4a5568;
+        }
+        
+        .empty-state p {
+            margin-bottom: 1.5rem;
+        }
+        
+        .loading-state {
+            text-align: center;
+            padding: 2rem;
+            color: #718096;
+            font-style: italic;
+        }
+        
+        .hidden {
+            display: none !important;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .header-content {
+                padding: 0 1rem;
+            }
+
+            .nav-tabs-content {
+                padding: 0 1rem;
+            }
+
+            .tab-button {
+                padding: 1rem 1.2rem;
+            }
+
+            .main-content {
+                padding: 1rem;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .projects-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .portfolio-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .community-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .skill-level-filters,
+            .field-filters {
+                justify-content: center;
+            }
+
+            .profile-dropdown {
+                width: 280px;
+                right: -20px;
+            }
+
+            .page {
+                padding: 1rem;
+            }
+
+            .dropdown-filters {
+                flex-direction: column;
+            }
+
+            .dropdown-filter {
+                width: 100%;
+            }
+            
+            .review-actions {
+                flex-direction: column;
+            }
+            
+            .message-actions {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+        }
+
+        /* Animations */
+        @keyframes slideDown {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        /* Utility Classes */
+        .text-center { text-align: center; }
+        .mt-1 { margin-top: 0.5rem; }
+        .mt-2 { margin-top: 1rem; }
+        .mt-3 { margin-top: 1.5rem; }
+        .mb-1 { margin-bottom: 0.5rem; }
+        .mb-2 { margin-bottom: 1rem; }
+        .mb-3 { margin-bottom: 1.5rem; }
+        .p-2 { padding: 1rem; }
+        .p-3 { padding: 1.5rem; }  
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="header-content">
+            <div class="logo">
+                <img src="BN-logo.png" alt="BuildNest Logo" class="logo-image">
+                <span>BuildNest</span>
+            </div>
+            <div class="user-header">
+                <button class="notifications" id="notifications-btn">
+                    <i class="icon">🔔</i>
+                    <span class="notification-badge hidden">0</span>
+                </button>
+                <div class="user-profile-dropdown">
+                    <button class="user-profile-trigger">
+                        <div class="user-avatar">U</div>
+                        <div class="user-info">
+                            <h3>Loading...</h3>
+                            <p>User</p>
+                        </div>
+                        <span class="dropdown-arrow">▼</span>
+                    </button>
+                    <div class="profile-dropdown">
+                        <div class="profile-dropdown-header">
+                            <div class="profile-dropdown-avatar">U</div>
+                            <div class="profile-dropdown-info">
+                                <h3>Loading...</h3>
+                                <p>User</p>
+                                <p>Location not set</p>
+                            </div>
+                        </div>
+                        <div class="profile-details">
+                            <div class="profile-detail-item">
+                                <span class="profile-detail-label">Experience:</span>
+                                <span class="profile-detail-value">Not set</span>
+                            </div>
+                            <div class="profile-detail-item">
+                                <span class="profile-detail-label">Projects:</span>
+                                <span class="profile-detail-value">0 completed</span>
+                            </div>
+                            <div class="profile-detail-item">
+                                <span class="profile-detail-label">Rating:</span>
+                                <span class="profile-detail-value">0/5.0</span>
+                            </div>
+                        </div>
+                        <div class="profile-dropdown-menu">
+                            <button class="profile-menu-item" id="view-profile-btn">
+                                <i class="icon">👤</i>
+                                <span>View Profile</span>
+                            </button>
+                            <button class="profile-menu-item" id="edit-profile-btn">
+                                <i class="icon">✏️</i>
+                                <span>Edit Profile</span>
+                            </button>
+                            <button class="profile-menu-item" id="settings-btn">
+                                <i class="icon">⚙️</i>
+                                <span>Settings</span>
+                            </button>
+                            <button class="profile-menu-item logout">
+                                <i class="icon">🚪</i>
+                                <span>Logout</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Navigation Tabs -->
+    <nav class="nav-tabs">
+        <div class="nav-tabs-content">
+            <button class="tab-button active" data-tab="overview">Overview</button>
+            <button class="tab-button" data-tab="find-projects">Find Projects</button>
+            <button class="tab-button" data-tab="create-project">Create Project</button>
+            <button class="tab-button" data-tab="submissions">Submissions & Reviews</button>
+            <button class="tab-button" data-tab="applications">Applications</button>
+            <button class="tab-button" data-tab="community">Community</button>
+            <button class="tab-button" data-tab="messages">Messages</button>
+            <button class="tab-button" data-tab="portfolio">Portfolio</button>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Overview Tab -->
+        <div class="tab-content active" id="overview">
+            <h1 class="card-title">Dashboard Overview</h1>
+            <div class="stats-grid">
+                <div class="stat-card" id="active-projects-stat">
+                    <div class="stat-header">
+                        <div class="stat-title">Active Projects</div>
+                        <div class="stat-icon">📊</div>
+                    </div>
+                    <div class="stat-value">0</div>
+                    <div class="stat-change">No data yet</div>
+                </div>
+                <div class="stat-card" id="applications-sent-stat">
+                    <div class="stat-header">
+                        <div class="stat-title">Applications Sent</div>
+                        <div class="stat-icon">📝</div>
+                    </div>
+                    <div class="stat-value">0</div>
+                    <div class="stat-change">No data yet</div>
+                </div>
+                <div class="stat-card" id="connections-stat">
+                    <div class="stat-header">
+                        <div class="stat-title">Connections</div>
+                        <div class="stat-icon">👥</div>
+                    </div>
+                    <div class="stat-value">0</div>
+                    <div class="stat-change">No data yet</div>
+                </div>
+                <div class="stat-card" id="community-posts-stat">
+                    <div class="stat-header">
+                        <div class="stat-title">Community Posts</div>
+                        <div class="stat-icon">💬</div>
+                    </div>
+                    <div class="stat-value">0</div>
+                    <div class="stat-change">No data yet</div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title">Recent Activity</h2>
+                </div>
+                <div class="empty-state">
+                    <div class="empty-icon">📊</div>
+                    <h3>No recent activity</h3>
+                    <p>Your activity will appear here as you use BuildNest</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Create Project Tab -->
+        <div class="tab-content" id="create-project">
+            <div class="guide">
+                <h2 class="guide-title">How to Create a Successful Project Listing</h2>
+                <ul class="guide-steps">
+                    <li>1. Provide a clear and concise project title.</li>
+                    <li>2. Write a detailed description outlining the project goals, technologies used, and expected outcomes.</li>
+                    <li>3. Specify the required skill level to attract suitable collaborators.</li>
+                    <li>4. Choose the appropriate field to categorize your project effectively.</li>
+                    <li>5. Indicate whether you're looking for solo help or team members.</li>
+                    <li>6. Set a realistic timeline and time commitment expectations.</li>
+                    <li>7. List any specific skills or experience required for the project.</li>
+                </ul>
+                <p style="color: #4a5568; font-size: 0.9rem;">Following these steps will help you create an appealing project listing that attracts the right collaborators!</p>    
+            </div>
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title">Create New Project</h2>
+                </div>
+                
+                <form id="createProjectForm">
+                    <div class="form-group">
+                        <label class="form-label">Project Title</label>
+                        <input type="text" class="form-input" placeholder="Enter project title" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Project Description</label>
+                        <textarea class="form-textarea" placeholder="Describe your project in detail..." required></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Skill Level</label>
+                        <select class="form-select" required>
+                            <option value="">Select skill level</option>
+                            <option value="beginner">Beginner - Perfect for students and new developers</option>
+                            <option value="intermediate">Intermediate - For developers with some experience</option>
+                            <option value="advanced">Advanced - For experienced developers</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Field</label>
+                        <select class="form-select" required>
+                            <option value="">Select field</option>
+                            <option value="web-development">Web Development</option>
+                            <option value="mobile-development">Mobile Development</option>
+                            <option value="data-science">Data Science</option>
+                            <option value="ai-ml">AI/Machine Learning</option>
+                            <option value="blockchain">Blockchain</option>
+                            <option value="game-development">Game Development</option>
+                            <option value="devops">DevOps</option>
+                            <option value="cybersecurity">Cybersecurity</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Collaboration Type</label>
+                        <select class="form-select" id="collaborationType" required onchange="toggleTeamSize()">
+                            <option value="">Select collaboration type</option>
+                            <option value="solo">Solo (I need help with my project)</option>
+                            <option value="group">Group (Looking for team members)</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group" id="teamSizeGroup" style="display: none;">
+                        <label class="form-label">Team Size</label>
+                        <select class="form-select">
+                            <option value="">Select team size</option>
+                            <option value="2-3">2-3 members</option>
+                            <option value="4-5">4-5 members</option>
+                            <option value="6-8">6-8 members</option>
+                            <option value="8+">8+ members</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Project Timeline</label>
+                        <select class="form-select" required>
+                            <option value="">Select timeline</option>
+                            <option value="1-2 weeks">1-2 weeks</option>
+                            <option value="1 month">1 month</option>
+                            <option value="2-3 months">2-3 months</option>
+                            <option value="3-6 months">3-6 months</option>
+                            <option value="6+ months">6+ months</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Preferred Tech Stack</label>
+                        <input type="text" class="form-input" placeholder="e.g., React, Node.js, MongoDB" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Time Commitment</label>
+                        <select class="form-select" required>
+                            <option value="">Select time commitment</option>
+                            <option value="5-10 hours/week">5-10 hours/week</option>
+                            <option value="10-15 hours/week">10-15 hours/week</option>
+                            <option value="15-20 hours/week">15-20 hours/week</option>
+                            <option value="20+ hours/week">20+ hours/week</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Additional Requirements</label>
+                        <textarea class="form-textarea" placeholder="Any specific skills, experience level, or other requirements..."></textarea>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary">Create Project</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Submissions & Reviews Tab -->
+        <div class="tab-content" id="submissions">
+            <h1 class="card-title">Project Submissions & Reviews</h1>
+            <p style="color: #718096; margin-bottom: 2rem;">Submit your completed work for review and manage project submissions.</p>
+            
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title">My Completed Work Submissions</h2>
+                </div>
+                <div class="empty-state">
+                    <div class="empty-icon">📤</div>
+                    <h3>No submissions yet</h3>
+                    <p>Your project submissions will appear here</p>
+                </div>
+            </div>
+            
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title">Submissions to Review (As Project Owner)</h2>
+                </div>
+                <div class="empty-state">
+                    <div class="empty-icon">📋</div>
+                    <h3>No submissions to review</h3>
+                    <p>Submissions from collaborators will appear here</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Find Projects Tab -->
+        <div class="tab-content" id="find-projects">
+            <h1 class="card-title">Find Projects</h1>
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title">Filter Projects</h2>
+                </div>
+                <div class="dropdown-filters">
+                    <div class="form-group dropdown-filter">
+                        <label class="form-label">Project Type</label>
+                        <select class="form-select" id="project-type-filter">
+                            <option value="all">All Types</option>
+                            <option value="solo">Solo Projects</option>
+                            <option value="group">Group Projects</option>
+                        </select>
+                    </div>
+                    <div class="form-group dropdown-filter">
+                        <label class="form-label">Skill Level</label>
+                        <select class="form-select" id="skill-level-filter">
+                            <option value="all">All Levels</option>
+                            <option value="beginner">Beginner</option>
+                            <option value="intermediate">Intermediate</option>
+                            <option value="advanced">Advanced</option>
+                        </select>
+                    </div>
+                    <div class="form-group dropdown-filter">
+                        <label class="form-label">Field</label>
+                        <select class="form-select" id="field-filter">
+                            <option value="all">All Fields</option>
+                            <option value="web">Web Development</option>
+                            <option value="mobile">Mobile Development</option>
+                            <option value="design">UI/UX Design</option>
+                            <option value="data">Data Science</option>
+                            <option value="ai">AI/ML</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <div class="projects-grid">
+                <div class="empty-state">
+                    <div class="empty-icon">🔍</div>
+                    <h3>No projects available</h3>
+                    <p>Be the first to create a project!</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Applications Tab -->
+        <div class="tab-content" id="applications">
+            <h1 class="card-title">Applications</h1>
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title">Applications Received</h2>
+                </div>
+                <div class="empty-state">
+                    <div class="empty-icon">📥</div>
+                    <h3>No applications received</h3>
+                    <p>Applications to your projects will appear here</p>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title">Applications Sent</h2>
+                </div>
+                <div class="empty-state">
+                    <div class="empty-icon">📤</div>
+                    <h3>No applications sent</h3>
+                    <p>Your project applications will appear here</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Community Tab -->
+        <div class="tab-content" id="community">
+            <h1 class="card-title">Community Discussions</h1>
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title">Start a Discussion</h2>
+                </div>
+                <button class="btn btn-primary" id="start-discussion-btn">Start Discussion</button>
+            </div>
+
+            <div class="community-grid">
+                <div>
+                    <div class="empty-state">
+                        <div class="empty-icon">💬</div>
+                        <h3>No discussions yet</h3>
+                        <p>Start the first discussion in the community</p>
+                    </div>
+                </div>
+
+                <div class="active-members">
+                    <h3>Active Community Members</h3>
+                    <div class="empty-state">
+                        <div class="empty-icon">👥</div>
+                        <p>No active members to display</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Messages Tab -->
+        <div class="tab-content" id="messages">
+            <h1 class="card-title">Messages</h1>
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title">Connection Requests</h2>
+                </div>
+                <div class="empty-state">
+                    <div class="empty-icon">👋</div>
+                    <h3>No connection requests</h3>
+                    <p>Connection requests will appear here</p>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title">Recent Conversations</h2>
+                </div>
+                <div class="empty-state">
+                    <div class="empty-icon">💬</div>
+                    <h3>No messages yet</h3>
+                    <p>Your conversations will appear here</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Portfolio Tab -->
+        <div class="tab-content" id="portfolio">
+            <h1 class="card-title">My Portfolio</h1>
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title">Add New Project</h2>
+                </div>
+                <button class="btn btn-primary" id="add-project-btn">Add Project</button>
+            </div>
+
+            <div class="portfolio-grid">
+                <div class="empty-state">
+                    <div class="empty-icon">📁</div>
+                    <h3>No portfolio projects yet</h3>
+                    <p>Add your completed projects to showcase your work</p>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-grid">
+                <div class="footer-section">
+                    <h3>About BuildNest</h3>
+                    <p>BuildNest connects developers, designers, and creators to collaborate on innovative projects and bring ideas to life.</p>
+                </div>
+                <div class="footer-section">
+                    <h3>Quick Links</h3>
+                    <p><a href="#">How It Works</a></p>
+                    <p><a href="#">Success Stories</a></p>
+                    <p><a href="#">FAQ</a></p>
+                    <p><a href="#">Support</a></p>
+                </div>
+                <div class="footer-section">
+                    <h3>Resources</h3>
+                    <p><a href="#">Blog</a></p>
+                    <p><a href="#">Tutorials</a></p>
+                    <p><a href="#">Community Guidelines</a></p>
+                    <p><a href="#">Terms of Service</a></p>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2023 BuildNest. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Profile Page -->
+    <div class="page" id="profile-page">
+        <div class="page-header">
+            <h2 class="page-title">My Profile</h2>
+            <button class="back-button" onclick="closePage('profile-page')">← Back</button>
+        </div>
+        <div class="page-content">
+            <div class="card">
+                <div class="profile-dropdown-header">
+                    <div class="profile-dropdown-avatar" id="profile-avatar">U</div>
+                    <div class="profile-dropdown-info">
+                        <h3 id="profile-name">Loading...</h3>
+                        <p id="profile-title">User</p>
+                        <p id="profile-location">Location not set</p>
+                    </div>
+                </div>
+                <div class="profile-details">
+                    <div class="profile-detail-item">
+                        <span class="profile-detail-label">Experience:</span>
+                        <span class="profile-detail-value" id="profile-experience">Not set</span>
+                    </div>
+                    <div class="profile-detail-item">
+                        <span class="profile-detail-label">Projects Completed:</span>
+                        <span class="profile-detail-value" id="profile-projects">0</span>
+                    </div>
+                    <div class="profile-detail-item">
+                        <span class="profile-detail-label">Rating:</span>
+                        <span class="profile-detail-value" id="profile-rating">0/5.0</span>
+                    </div>
+                    <div class="profile-detail-item">
+                        <span class="profile-detail-label">Connections:</span>
+                        <span class="profile-detail-value" id="profile-connections">0</span>
+                    </div>
+                    <div class="profile-detail-item">
+                        <span class="profile-detail-label">Specialties:</span>
+                        <span class="profile-detail-value" id="profile-specialties">Not specified</span>
+                    </div>
+                    <div class="profile-detail-item">
+                        <span class="profile-detail-label">Skills:</span>
+                        <span class="profile-detail-value" id="profile-skills">Not specified</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card mt-3">
+                <div class="card-header">
+                    <h2 class="card-title">Bio/Introduction</h2>
+                </div>
+                <p id="profile-bio">No bio added yet.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit Profile Page -->
+    <div class="page" id="edit-profile-page">
+        <div class="page-header">
+            <h2 class="page-title">Edit Profile</h2>
+            <button class="back-button" onclick="closePage('edit-profile-page')">← Back</button>
+        </div>
+        <div class="page-content">
+            <div class="card">
+                <form id="edit-profile-form">
+                    <div class="form-group">
+                        <label class="form-label">Full Name</label>
+                        <input type="text" class="form-input" id="edit-full-name" placeholder="Enter your full name">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Title/Role</label>
+                        <input type="text" class="form-input" id="edit-title" placeholder="e.g., UI/UX Designer">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Location</label>
+                        <input type="text" class="form-input" id="edit-location" placeholder="e.g., San Francisco, CA">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Bio/Introduction</label>
+                        <textarea class="form-textarea" id="edit-bio" placeholder="Tell us about yourself..."></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Skills (comma separated)</label>
+                        <input type="text" class="form-input" id="edit-skills" placeholder="e.g., React, Node.js, UI Design">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Experience Level</label>
+                        <select class="form-select" id="edit-experience">
+                            <option value="">Select experience level</option>
+                            <option value="beginner">Beginner</option>
+                            <option value="intermediate">Intermediate</option>
+                            <option value="advanced">Advanced</option>
+                            <option value="expert">Expert</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Save Changes</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Application Form Page -->
+    <div class="page" id="application-page">
+        <div class="page-header">
+            <h2 class="page-title">Apply for Project: <span id="application-project-name"></span></h2>
+            <button class="back-button" onclick="closePage('application-page')">← Back</button>
+        </div>
+        <div class="page-content">
+            <div class="card">
+                <form id="application-form">
+                    <div class="form-group">
+                        <label class="form-label">Why do you want to join this project?</label>
+                        <textarea class="form-textarea" placeholder="Explain your motivation for joining this project..." required></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">State your experience and related work</label>
+                        <textarea class="form-textarea" placeholder="Describe your relevant experience and past projects..." required></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Submit Application</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Start Discussion Page -->
+    <div class="page" id="discussion-page">
+        <div class="page-header">
+            <h2 class="page-title">Start a New Discussion</h2>
+            <button class="back-button" onclick="closePage('discussion-page')">← Back</button>
+        </div>
+        <div class="page-content">
+            <div class="card">
+                <form id="discussion-form">
+                    <div class="form-group">
+                        <label class="form-label">Discussion Title</label>
+                        <input type="text" class="form-input" placeholder="Enter a title for your discussion..." required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Discussion Content</label>
+                        <textarea class="form-textarea" placeholder="What would you like to discuss?" required></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Tags</label>
+                        <input type="text" class="form-input" placeholder="Add relevant tags (comma separated)...">
+                    </div>
+                    <button type="submit" class="btn btn-primary">Post Discussion</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+<script>
+// Global variables
+let currentUser = null;
+let dashboardData = null;
+const API_BASE = "http://localhost:3000/api";
+
+// Initialize dashboard
+document.addEventListener('DOMContentLoaded', function() {
+    const user = JSON.parse(localStorage.getItem('buildnest_user'));
+    if (!user) {
+        window.location.href = 'signup&login.html';
+        return;
+    }
+    
+    currentUser = user;
+    initializeDashboard();
+    
+    // Apply saved theme
+    const settings = JSON.parse(localStorage.getItem('buildnest_settings')) || {};
+    if (settings.theme) {
+        applyTheme(settings.theme);
+    }
+});
+
+async function initializeDashboard() {
+    console.log('🚀 Initializing dashboard for user:', currentUser.uid);
+    
+    try {
+        await ensureUserInDatabase();
+        await updateUserInfo();
+        await loadDashboardData();
+        initializeEventListeners();
+        setupTabNavigation();
+        await sendWelcomeNotification();
+        
+        console.log('✅ Dashboard initialized successfully');
+    } catch (error) {
+        console.error('❌ Dashboard initialization failed:', error);
+    }
+}
+
+async function ensureUserInDatabase() {
+    if (!currentUser) return;
+    
+    try {
+        const response = await fetch(`${API_BASE}/sync-user`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                uid: currentUser.uid,
+                email: currentUser.email || 'user@example.com',
+                displayName: currentUser.displayName || 'User',
+                photoURL: currentUser.photoURL || ''
+            })
+        });
+        
+        const result = await response.json();
+        if (result.success) {
+            console.log('✅ User synced with database');
+        }
+    } catch (error) {
+        console.error('❌ Error syncing user:', error);
+    }
+}
+
+async function updateUserInfo() {
+    if (!currentUser) return;
+    
+    try {
+        const response = await fetch(`${API_BASE}/user/${currentUser.uid}`);
+        const userData = await response.json();
+        
+        if (userData.success) {
+            Object.assign(currentUser, userData.user);
+            localStorage.setItem('buildnest_user', JSON.stringify(currentUser));
+            updateUserUI(userData.user);
+        }
+    } catch (error) {
+        console.error('❌ Error loading user info:', error);
+        updateUserUI(currentUser);
+    }
+}
+
+function updateUserUI(user) {
+    const displayName = user.display_name || user.displayName || 'User';
+    const title = user.title || 'BuildNest Member';
+    const location = user.location || 'Location not set';
+    const experience = user.experience_level ? 
+        user.experience_level.charAt(0).toUpperCase() + user.experience_level.slice(1) : 'Not set';
+        
+    
+    // Update header
+    document.querySelector('.user-info h3').textContent = displayName;
+    document.querySelector('.user-info p').textContent = title;
+    document.querySelector('.user-avatar').textContent = getInitials(displayName);
+    
+    // Update profile dropdown
+    document.querySelector('.profile-dropdown-info h3').textContent = displayName;
+    document.querySelector('.profile-dropdown-info p:nth-child(2)').textContent = title;
+    document.querySelector('.profile-dropdown-info p:nth-child(3)').textContent = location;
+    document.querySelector('.profile-dropdown-avatar').textContent = getInitials(displayName);
+    
+    // Update profile details
+    document.querySelector('.profile-detail-item:nth-child(1) .profile-detail-value').textContent = experience;
+}
+
+async function loadDashboardData() {
+    if (!currentUser) return;
+    
+    try {
+        const response = await fetch(`${API_BASE}/user/${currentUser.uid}/dashboard`);
+        const data = await response.json();
+        
+        if (data.success) {
+            dashboardData = data;
+            updateDashboardUI();
+        } else {
+            showEmptyStates();
+        }
+    } catch (error) {
+        console.error('❌ Error loading dashboard:', error);
+        showEmptyStates();
+    }
+}
+
+function showEmptyStates() {
+    document.querySelectorAll('.stat-value').forEach(el => {
+        el.textContent = '0';
+    });
+}
+
+function updateDashboardUI() {
+    if (!dashboardData) {
+        showEmptyStates();
+        return;
+    }
+    
+    updateStats();
+    updateProjectsList();
+    updateCommunityContent();
+    updateApplicationsList();
+    loadActiveMembers();
+}
+
+function updateStats() {
+    const stats = dashboardData.stats || {};
+    
+    document.querySelector('#active-projects-stat .stat-value').textContent = stats.activeProjects || 0;
+    document.querySelector('#applications-sent-stat .stat-value').textContent = stats.applicationsSent || 0;
+    document.querySelector('#connections-stat .stat-value').textContent = stats.connections || 0;
+    document.querySelector('#community-posts-stat .stat-value').textContent = stats.communityPosts || 0;
+}
+
+function updateProjectsList() {
+    const projectsGrid = document.querySelector('#find-projects .projects-grid');
+    if (!projectsGrid) return;
+    
+    const projects = dashboardData.availableProjects || [];
+    
+    if (projects.length === 0) {
+        projectsGrid.innerHTML = `
+            <div class="empty-state">
+                <div class="empty-icon">🔍</div>
+                <h3>No projects available</h3>
+                <p>Be the first to create a project!</p>
+            </div>
+        `;
+        return;
+    }
+    
+    projectsGrid.innerHTML = '';
+    
+    projects.forEach(project => {
+        const typeClass = project.collaboration_type === 'solo' ? 'type-solo' : 'type-group';
+        const levelClass = `level-${project.skill_level}`;
+        
+        const projectCard = document.createElement('div');
+        projectCard.className = 'project-card';
+        projectCard.innerHTML = `
+            <div class="project-header">
+                <h3 class="project-title">${project.title}</h3>
+                <div class="project-badges">
+                    <span class="project-type ${typeClass}">${project.collaboration_type === 'solo' ? 'Solo Project' : 'Group Project'}</span>
+                    <span class="skill-level ${levelClass}">${project.skill_level}</span>
+                </div>
+            </div>
+            <p class="project-description">${project.description}</p>
+            <div class="project-tech">
+                ${(project.tech_stack || '').split(',').map(tech => 
+                    `<span class="tech-badge">${tech.trim()}</span>`
+                ).join('')}
+            </div>
+            <div class="project-footer">
+                <div class="project-author">
+                    <div class="author-avatar">${getInitials(project.owner_name || 'Owner')}</div>
+                    <span>${project.owner_name || 'Project Owner'}</span>
+                </div>
+                <button class="btn btn-primary apply-btn" data-project-id="${project.id}" data-project-title="${project.title}">Apply</button>
+            </div>
+        `;
+        
+        projectsGrid.appendChild(projectCard);
+    });
+}
+
+function updateCommunityContent() {
+    const discussionsContainer = document.querySelector('#community .community-grid > div');
+    
+    const discussions = dashboardData.discussions || [];
+    
+    if (discussions.length === 0) {
+        discussionsContainer.innerHTML = `
+            <div class="empty-state">
+                <div class="empty-icon">💬</div>
+                <h3>No discussions yet</h3>
+                <p>Start the first discussion in the community</p>
+            </div>
+        `;
+        return;
+    }
+    
+    discussionsContainer.innerHTML = '';
+    
+    discussions.forEach(discussion => {
+        const discussionElement = document.createElement('div');
+        discussionElement.className = 'discussion-item';
+        discussionElement.innerHTML = `
+            <div class="discussion-header">
+                <h3 class="discussion-title">${discussion.title}</h3>
+                <div class="discussion-meta">Posted by: ${discussion.author_name} • ${new Date(discussion.created_at).toLocaleDateString()}</div>
+            </div>
+            <div class="discussion-content">
+                <p>${discussion.content}</p>
+            </div>
+            <div class="discussion-actions">
+                <button class="btn btn-secondary view-discussion-btn" data-discussion-id="${discussion.id}">View Discussion & Comments</button>
+            </div>
+            <div class="comment-section" id="comments-${discussion.id}" style="display: none; margin-top: 1rem;">
+                <div class="comment-form">
+                    <textarea class="form-textarea comment-textarea" placeholder="Add a comment..." rows="2"></textarea>
+                    <button class="btn btn-primary add-comment-btn" data-discussion-id="${discussion.id}">Post Comment</button>
+                </div>
+                <div class="comments-list" id="comments-list-${discussion.id}">
+                    <div class="loading-state">Loading comments...</div>
+                </div>
+            </div>
+        `;
+        
+        discussionsContainer.appendChild(discussionElement);
+    });
+}
+
+async function loadActiveMembers() {
+    try {
+        const response = await fetch(`${API_BASE}/community/active-members`);
+        const result = await response.json();
+        
+        if (result.success) {
+            displayActiveMembers(result.members);
+        } else {
+            console.error('Error loading active members:', result.message);
+        }
+    } catch (error) {
+        console.error('❌ Error loading active members:', error);
+    }
+}
+
+function displayActiveMembers(members) {
+    const membersContainer = document.querySelector('#community .active-members');
+    
+    if (!members || members.length === 0) {
+        membersContainer.innerHTML = `
+            <h3>Active Community Members</h3>
+            <div class="empty-state">
+                <div class="empty-icon">👥</div>
+                <p>No active members to display</p>
+            </div>
+        `;
+        return;
+    }
+    
+    let membersHTML = '<h3>Active Community Members</h3>';
+    
+    members.forEach(member => {
+        membersHTML += `
+            <div class="member-item">
+                <div class="member-avatar">${getInitials(member.display_name || member.full_name || 'U')}</div>
+                <div class="member-info">
+                    <h4>${member.display_name || member.full_name || 'User'}</h4>
+                    <p>${member.title || 'Member'} • ${member.project_count || 0} projects</p>
+                </div>
+            </div>
+        `;
+    });
+    
+    membersContainer.innerHTML = membersHTML;
+}
+
+function updateApplicationsList() {
+    const sentContainer = document.querySelector('#applications .card:last-child');
+    const receivedContainer = document.querySelector('#applications .card:first-child');
+    
+    const sentApplications = dashboardData.sentApplications || [];
+    const receivedApplications = dashboardData.receivedApplications || [];
+    
+    // Update sent applications
+    if (sentApplications.length === 0) {
+        sentContainer.innerHTML = `
+            <div class="card-header">
+                <h2 class="card-title">Applications Sent</h2>
+            </div>
+            <div class="empty-state">
+                <div class="empty-icon">📤</div>
+                <h3>No applications sent</h3>
+                <p>Your project applications will appear here</p>
+            </div>
+        `;
+    } else {
+        let sentHTML = `<div class="card-header"><h2 class="card-title">Applications Sent</h2></div>`;
+        
+        sentApplications.forEach(app => {
+            let statusClass = 'status-pending';
+            if (app.status === 'accepted') statusClass = 'status-accepted';
+            if (app.status === 'rejected') statusClass = 'status-rejected';
+            
+            sentHTML += `
+                <div class="activity-item">
+                    <div class="activity-header">
+                        <div class="activity-project">${app.project_title}</div>
+                        <div class="activity-status ${statusClass}">${app.status || 'Pending'}</div>
+                    </div>
+                    <p>${app.message}</p>
+                    <small>Applied on ${new Date(app.created_at).toLocaleDateString()}</small>
+                </div>
+            `;
+        });
+        
+        sentContainer.innerHTML = sentHTML;
+    }
+    
+    // Update received applications
+    if (receivedApplications.length === 0) {
+        receivedContainer.innerHTML = `
+            <div class="card-header">
+                <h2 class="card-title">Applications Received</h2>
+            </div>
+            <div class="empty-state">
+                <div class="empty-icon">📥</div>
+                <h3>No applications received</h3>
+                <p>Applications to your projects will appear here</p>
+            </div>
+        `;
+    } else {
+        let receivedHTML = `<div class="card-header"><h2 class="card-title">Applications Received</h2></div>`;
+        
+        receivedApplications.forEach(app => {
+            receivedHTML += `
+                <div class="activity-item">
+                    <div class="activity-header">
+                        <div class="activity-project">Application from ${app.applicant_name}</div>
+                        <div class="activity-status status-new">New</div>
+                    </div>
+                    <p><strong>Project:</strong> ${app.project_title}</p>
+                    <p><strong>Message:</strong> ${app.message}</p>
+                    <div class="message-actions">
+                        <button class="btn btn-success accept-application-btn" data-app-id="${app.id}">Accept</button>
+                        <button class="btn btn-danger reject-application-btn" data-app-id="${app.id}">Reject</button>
+                    </div>
+                </div>
+            `;
+        });
+        
+        receivedContainer.innerHTML = receivedHTML;
+    }
+}
+
+async function sendWelcomeNotification() {
+    try {
+        await fetch(`${API_BASE}/user/${currentUser.uid}/notifications`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                title: 'Welcome to BuildNest! 🎉',
+                message: 'We\'re excited to have you here. Start by creating your first project!',
+                type: 'system'
+            })
+        });
+    } catch (error) {
+        console.error('❌ Error sending welcome notification:', error);
+    }
+}
+
+function getInitials(name) {
+    if (!name) return 'U';
+    return name.split(' ').map(word => word[0]).join('').toUpperCase().substring(0, 2);
+}
+
+// ==================== EVENT LISTENERS ====================
+
+function initializeEventListeners() {
+    // Tab navigation
+    document.querySelectorAll('.tab-button').forEach(button => {
+        button.addEventListener('click', function() {
+            const tabId = this.getAttribute('data-tab');
+            switchTab(tabId);
+        });
+    });
+    
+    // Forms
+    document.getElementById('createProjectForm').addEventListener('submit', handleCreateProject);
+    document.getElementById('edit-profile-form').addEventListener('submit', handleEditProfile);
+    document.getElementById('discussion-form').addEventListener('submit', handleCreateDiscussion);
+    document.getElementById('application-form').addEventListener('submit', handleSubmitApplication);
+    
+    // Profile dropdown
+    document.querySelector('.user-profile-trigger').addEventListener('click', function() {
+        document.querySelector('.profile-dropdown').classList.toggle('show');
+    });
+    
+    // Profile actions
+    document.getElementById('view-profile-btn').addEventListener('click', showProfilePage);
+    document.getElementById('edit-profile-btn').addEventListener('click', showEditProfilePage);
+    document.getElementById('settings-btn').addEventListener('click', showSettingsPage);
+    
+    // Community actions
+    document.getElementById('start-discussion-btn').addEventListener('click', function() {
+        openPage('discussion-page');
+    });
+    
+    // Portfolio actions
+    document.getElementById('add-project-btn').addEventListener('click', function() {
+        showPortfolioModal();
+    });
+    
+    // Notifications
+    document.getElementById('notifications-btn').addEventListener('click', showNotifications);
+    
+    // Team size toggle
+    document.getElementById('collaborationType').addEventListener('change', toggleTeamSize);
+    
+    // Logout
+    document.querySelector('.logout').addEventListener('click', function() {
+        localStorage.removeItem('buildnest_user');
+        localStorage.removeItem('buildnest_settings');
+        window.location.href = 'signup&login.html';
+    });
+    
+    // Delegated event listeners for dynamic content
+    document.addEventListener('click', function(e) {
+        // Apply to project buttons
+        if (e.target.classList.contains('apply-btn')) {
+            const projectId = e.target.dataset.projectId;
+            const projectTitle = e.target.dataset.projectTitle;
+            openApplicationPage(projectId, projectTitle);
+        }
+        
+        // View discussion buttons
+        if (e.target.classList.contains('view-discussion-btn')) {
+            const discussionId = e.target.dataset.discussionId;
+            toggleComments(discussionId);
+        }
+        
+        // Add comment buttons
+        if (e.target.classList.contains('add-comment-btn')) {
+            const discussionId = e.target.dataset.discussionId;
+            addComment(discussionId);
+        }
+        
+        // Accept/Reject application buttons
+        if (e.target.classList.contains('accept-application-btn')) {
+            const appId = e.target.dataset.appId;
+            handleApplicationAction(appId, 'accept');
+        }
+        
+        if (e.target.classList.contains('reject-application-btn')) {
+            const appId = e.target.dataset.appId;
+            handleApplicationAction(appId, 'reject');
+        }
+        
+        // Back buttons
+        if (e.target.classList.contains('back-button')) {
+            const page = e.target.closest('.page');
+            if (page) closePage(page.id);
+        }
+        
+        // Close dropdown when clicking outside
+        if (!e.target.closest('.user-profile-dropdown')) {
+            document.querySelector('.profile-dropdown').classList.remove('show');
+        }
+    });
+    
+    // Close pages when clicking outside
+    document.addEventListener('click', function(e) {
+        if (e.target.classList.contains('page')) {
+            closePage(e.target.id);
+        }
+        if (e.target.classList.contains('modal')) {
+            closeModal(e.target.id);
+        }
+    });
+}
+
+// ==================== FORM HANDLERS ====================
+
+async function handleCreateProject(event) {
+    event.preventDefault();
+    
+    if (!currentUser) {
+        alert('Please log in to create a project');
+        return;
+    }
+    
+    const form = event.target;
+    const formData = new FormData(form);
+    
+    const projectData = {
+        title: form.querySelector('input[type="text"]').value,
+        description: form.querySelector('textarea').value,
+        skill_level: form.querySelector('select').value,
+        field: form.querySelectorAll('select')[1].value,
+        collaboration_type: document.getElementById('collaborationType').value,
+        timeline: form.querySelectorAll('select')[3].value,
+        tech_stack: form.querySelectorAll('input[type="text"]')[1].value
+    };
+    
+    if (!projectData.title || !projectData.description) {
+        alert('Please fill in title and description');
+        return;
+    }
+    
+    try {
+        const response = await fetch(`${API_BASE}/user/${currentUser.uid}/projects`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(projectData)
+        });
+        
+        const result = await response.json();
+        
+        if (result.success) {
+            alert('✅ Project created successfully!');
+            form.reset();
+            document.getElementById('teamSizeGroup').style.display = 'none';
+            await loadDashboardData();
+            switchTab('find-projects');
+        } else {
+            alert('❌ Error: ' + result.message);
+        }
+    } catch (error) {
+        console.error('❌ Error creating project:', error);
+        alert('❌ Error creating project. Please try again.');
+    }
+}
+
+async function handleEditProfile(event) {
+    event.preventDefault();
+    
+    const profileData = {
+        full_name: document.getElementById('edit-full-name').value,
+        title: document.getElementById('edit-title').value,
+        location: document.getElementById('edit-location').value,
+        bio: document.getElementById('edit-bio').value,
+        skills: document.getElementById('edit-skills').value,
+        experience_level: document.getElementById('edit-experience').value
+    };
+    
+    try {
+        const response = await fetch(`${API_BASE}/user/${currentUser.uid}/profile`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(profileData)
+        });
+        
+        const result = await response.json();
+        
+        if (result.success) {
+            alert('✅ Profile updated successfully!');
+            closePage('edit-profile-page');
+            await updateUserInfo();
+            await loadDashboardData();
+        } else {
+            alert('❌ Error: ' + result.message);
+        }
+    } catch (error) {
+        console.error('❌ Error updating profile:', error);
+        alert('❌ Error updating profile. Please try again.');
+    }
+}
+
+async function handleCreateDiscussion(event) {
+    event.preventDefault();
+    
+    const form = event.target;
+    const discussionData = {
+        title: form.querySelector('input[type="text"]').value,
+        content: form.querySelector('textarea').value,
+        tags: form.querySelectorAll('input[type="text"]')[1].value
+    };
+    
+    if (!discussionData.title || !discussionData.content) {
+        alert('Please fill in title and content');
+        return;
+    }
+    
+    try {
+        const response = await fetch(`${API_BASE}/user/${currentUser.uid}/discussions`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(discussionData)
+        });
+        
+        const result = await response.json();
+        
+        if (result.success) {
+            alert('✅ Discussion created successfully!');
+            closePage('discussion-page');
+            form.reset();
+            await loadDashboardData();
+        } else {
+            alert('❌ Error: ' + result.message);
+        }
+    } catch (error) {
+        console.error('❌ Error creating discussion:', error);
+        alert('❌ Error creating discussion. Please try again.');
+    }
+}
+
+async function handleSubmitApplication(event) {
+    event.preventDefault();
+    
+    const form = event.target;
+    const projectId = form.dataset.projectId;
+    const textareas = form.querySelectorAll('textarea');
+    
+    const applicationData = {
+        project_id: projectId,
+        message: textareas[0].value,
+        experience: textareas[1].value
+    };
+    
+    if (!applicationData.message) {
+        alert('Please fill in why you want to join this project');
+        return;
+    }
+    
+    try {
+        const response = await fetch(`${API_BASE}/user/${currentUser.uid}/applications`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(applicationData)
+        });
+        
+        const result = await response.json();
+        
+        if (result.success) {
+            alert('✅ Application submitted successfully!');
+            closePage('application-page');
+            form.reset();
+            await loadDashboardData();
+        } else {
+            alert('❌ Error: ' + (result.message || 'Unknown error'));
+        }
+    } catch (error) {
+        console.error('❌ Error submitting application:', error);
+        alert('❌ Error submitting application. Please try again.');
+    }
+}
+
+// ==================== NEW FEATURES ====================
+
+async function showProfilePage() {
+    openPage('profile-page');
+    
+    // Load fresh profile data
+    try {
+        const response = await fetch(`${API_BASE}/user/${currentUser.uid}`);
+        const userData = await response.json();
+        
+        if (userData.success) {
+            const user = userData.user;
+            
+            document.getElementById('profile-name').textContent = user.display_name || 'User';
+            document.getElementById('profile-title').textContent = user.title || 'BuildNest Member';
+            document.getElementById('profile-location').textContent = user.location || 'Location not set';
+            document.getElementById('profile-avatar').textContent = getInitials(user.display_name);
+            document.getElementById('profile-experience').textContent = user.experience_level || 'Not set';
+            document.getElementById('profile-bio').textContent = user.bio || 'No bio added yet.';
+            document.getElementById('profile-skills').textContent = user.skills || 'Not specified';
+            document.getElementById('profile-projects').textContent = dashboardData?.stats?.completedProjects || 0;
+        }
+    } catch (error) {
+        console.error('Error loading profile:', error);
+    }
+}
+
+function showEditProfilePage() {
+    openPage('edit-profile-page');
+    loadEditProfileData();
+}
+
+function loadEditProfileData() {
+    document.getElementById('edit-full-name').value = currentUser.display_name || currentUser.displayName || '';
+    document.getElementById('edit-title').value = currentUser.title || '';
+    document.getElementById('edit-location').value = currentUser.location || '';
+    document.getElementById('edit-bio').value = currentUser.bio || '';
+    document.getElementById('edit-skills').value = currentUser.skills || '';
+    document.getElementById('edit-experience').value = currentUser.experience_level || '';
+}
+
+function showSettingsPage() {
+    const settingsHTML = `
+        <div class="modal active" id="settings-modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2 class="modal-title">Settings</h2>
+                    <button class="modal-close" onclick="closeModal('settings-modal')">×</button>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label class="form-label">Notification Preferences</label>
+                        <div style="display: flex; flex-direction: column; gap: 0.5rem;">
+                            <label><input type="checkbox" checked> Email notifications</label>
+                            <label><input type="checkbox" checked> Project updates</label>
+                            <label><input type="checkbox" checked> Community mentions</label>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Privacy Settings</label>
+                        <select class="form-select" id="privacy-setting">
+                            <option value="public">Public Profile</option>
+                            <option value="private">Private Profile</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Theme</label>
+                        <select class="form-select" id="theme-setting">
+                            <option value="light">Light</option>
+                            <option value="dark">Dark</option>
+                            <option value="auto">Auto</option>
+                        </select>
+                    </div>
+                    <button class="btn btn-primary" style="margin-top: 1rem;" onclick="saveSettings()">Save Settings</button>
+                </div>
+            </div>
+        </div>
+    `;
+    
+    const modalContainer = document.createElement('div');
+    modalContainer.innerHTML = settingsHTML;
+    document.body.appendChild(modalContainer);
+    
+    // Load current settings
+    loadCurrentSettings();
+}
+
+function loadCurrentSettings() {
+    const settings = JSON.parse(localStorage.getItem('buildnest_settings')) || {};
+    
+    if (settings.theme) {
+        document.getElementById('theme-setting').value = settings.theme;
+    }
+    
+    if (settings.privacy) {
+        document.getElementById('privacy-setting').value = settings.privacy;
+    }
+}
+
+function saveSettings() {
+    const theme = document.getElementById('theme-setting').value;
+    const privacy = document.getElementById('privacy-setting').value;
+    
+    const settings = {
+        theme: theme,
+        privacy: privacy,
+        savedAt: new Date().toISOString()
+    };
+    
+    localStorage.setItem('buildnest_settings', JSON.stringify(settings));
+    applyTheme(theme);
+    
+    alert('Settings saved successfully!');
+    closeModal('settings-modal');
+}
+
+function applyTheme(theme) {
+    // Remove existing theme classes
+    document.body.classList.remove('theme-light', 'theme-dark');
+    
+    if (theme === 'dark') {
+        document.body.classList.add('theme-dark');
+    } else if (theme === 'light') {
+        document.body.classList.add('theme-light');
+    } else if (theme === 'auto') {
+        // Auto theme based on system preference
+        if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+            document.body.classList.add('theme-dark');
+        } else {
+            document.body.classList.add('theme-light');
+        }
+    }
+}
+
+function showPortfolioModal() {
+    const portfolioHTML = `
+        <div class="modal active" id="portfolio-modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2 class="modal-title">Add Portfolio Project</h2>
+                    <button class="modal-close" onclick="closeModal('portfolio-modal')">×</button>
+                </div>
+                <div class="modal-body">
+                    <form id="portfolio-form">
+                        <div class="form-group">
+                            <label class="form-label">Project Title</label>
+                            <input type="text" class="form-input" placeholder="Enter project title" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Project Description</label>
+                            <textarea class="form-textarea" placeholder="Describe your project..." required></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Technologies Used</label>
+                            <input type="text" class="form-input" placeholder="e.g., React, Node.js, MongoDB" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Project URL (optional)</label>
+                            <input type="url" class="form-input" placeholder="https://yourproject.com">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">GitHub Repository (optional)</label>
+                            <input type="url" class="form-input" placeholder="https://github.com/username/project">
+                        </div>
+                        <button type="submit" class="btn btn-primary">Add to Portfolio</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    `;
+    
+    const modalContainer = document.createElement('div');
+    modalContainer.innerHTML = portfolioHTML;
+    document.body.appendChild(modalContainer);
+    
+    // Add form handler
+    document.getElementById('portfolio-form').addEventListener('submit', function(e) {
+        e.preventDefault();
+        alert('Portfolio feature coming soon! This would save your project to your portfolio.');
+        closeModal('portfolio-modal');
+    });
+}
+
+async function showNotifications() {
+    try {
+        const response = await fetch(`${API_BASE}/user/${currentUser.uid}/notifications`);
+        const result = await response.json();
+        
+        if (result.success) {
+            showNotificationsModal(result.notifications);
+        } else {
+            alert('Error loading notifications');
+        }
+    } catch (error) {
+        console.error('Error loading notifications:', error);
+        alert('Error loading notifications. Please try again.');
+    }
+}
+
+function showNotificationsModal(notifications) {
+    let notificationsHTML = `
+        <div class="modal active" id="notifications-modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2 class="modal-title">Notifications</h2>
+                    <button class="modal-close" onclick="closeModal('notifications-modal')">×</button>
+                </div>
+                <div class="modal-body">
+    `;
+    
+    if (!notifications || notifications.length === 0) {
+        notificationsHTML += `<p class="empty-state">No notifications</p>`;
+    } else {
+        notifications.forEach(notification => {
+            notificationsHTML += `
+                <div class="notification-item" style="padding: 1rem; border-bottom: 1px solid #eee;">
+                    <h4 style="margin: 0 0 0.5rem 0;">${notification.title}</h4>
+                    <p style="margin: 0 0 0.5rem 0;">${notification.message}</p>
+                    <small style="color: #666;">${new Date(notification.created_at).toLocaleDateString()}</small>
+                </div>
+            `;
+        });
+    }
+    
+    notificationsHTML += `
+                </div>
+            </div>
+        </div>
+    `;
+    
+    const modalContainer = document.createElement('div');
+    modalContainer.innerHTML = notificationsHTML;
+    document.body.appendChild(modalContainer);
+}
+
+function closeModal(modalId) {
+    const modal = document.getElementById(modalId);
+    if (modal) modal.remove();
+}
+
+async function toggleComments(discussionId) {
+    const commentsSection = document.getElementById(`comments-${discussionId}`);
+    const commentsList = document.getElementById(`comments-list-${discussionId}`);
+    
+    if (commentsSection.style.display === 'none') {
+        commentsSection.style.display = 'block';
+        await loadComments(discussionId, commentsList);
+    } else {
+        commentsSection.style.display = 'none';
+    }
+}
+
+async function loadComments(discussionId, commentsList) {
+    try {
+        const response = await fetch(`${API_BASE}/discussions/${discussionId}/comments`);
+        const result = await response.json();
+        
+        if (result.success) {
+            if (!result.comments || result.comments.length === 0) {
+                commentsList.innerHTML = '<p>No comments yet. Be the first to comment!</p>';
+            } else {
+                let commentsHTML = '';
+                result.comments.forEach(comment => {
+                    commentsHTML += `
+                        <div class="comment-item">
+                            <div class="comment-author"><strong>${comment.author_name || 'User'}</strong></div>
+                            <div class="comment-content">${comment.content}</div>
+                            <small>${new Date(comment.created_at).toLocaleDateString()}</small>
+                        </div>
+                    `;
+                });
+                commentsList.innerHTML = commentsHTML;
+            }
+        } else {
+            commentsList.innerHTML = '<p>Error loading comments: ' + (result.message || 'Unknown error') + '</p>';
+        }
+    } catch (error) {
+        console.error('Error loading comments:', error);
+        commentsList.innerHTML = '<p>Error loading comments. Please try again.</p>';
+    }
+}
+
+async function addComment(discussionId) {
+    const commentSection = document.getElementById(`comments-${discussionId}`);
+    const textarea = commentSection.querySelector('.comment-textarea');
+    const content = textarea.value.trim();
+    
+    if (!content) {
+        alert('Please enter a comment');
+        return;
+    }
+    
+    try {
+        const response = await fetch(`${API_BASE}/discussions/${discussionId}/comments`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                uid: currentUser.uid,
+                content: content
+            })
+        });
+        
+        const result = await response.json();
+        
+        if (result.success) {
+            textarea.value = '';
+            const commentsList = document.getElementById(`comments-list-${discussionId}`);
+            await loadComments(discussionId, commentsList);
+        } else {
+            alert('Error adding comment: ' + (result.message || 'Unknown error'));
+        }
+    } catch (error) {
+        console.error('Error adding comment:', error);
+        alert('Error adding comment. Please try again.');
+    }
+}
+
+function openApplicationPage(projectId, projectTitle) {
+    document.getElementById('application-project-name').textContent = projectTitle;
+    document.getElementById('application-form').dataset.projectId = projectId;
+    openPage('application-page');
+}
+
+async function handleApplicationAction(appId, action) {
+    try {
+        const response = await fetch(`${API_BASE}/applications/${appId}/${action}`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' }
+        });
+        
+        const result = await response.json();
+        
+        if (result.success) {
+            alert(`Application ${action}ed successfully!`);
+            await loadDashboardData();
+        } else {
+            alert(`Error ${action}ing application: ${result.message}`);
+        }
+    } catch (error) {
+        console.error(`Error ${action}ing application:`, error);
+        alert(`Error ${action}ing application. Please try again.`);
+    }
+}
+
+// ==================== UTILITY FUNCTIONS ====================
+
+function switchTab(tabId) {
+    document.querySelectorAll('.tab-content').forEach(content => {
+        content.classList.remove('active');
+    });
+    document.querySelectorAll('.tab-button').forEach(button => {
+        button.classList.remove('active');
+    });
+    
+    document.getElementById(tabId).classList.add('active');
+    document.querySelector(`[data-tab="${tabId}"]`).classList.add('active');
+}
+
+function toggleTeamSize() {
+    const collaborationType = document.getElementById('collaborationType').value;
+    const teamSizeGroup = document.getElementById('teamSizeGroup');
+    teamSizeGroup.style.display = collaborationType === 'group' ? 'block' : 'none';
+}
+
+function openPage(pageId) {
+    document.getElementById(pageId).classList.add('active');
+}
+
+function closePage(pageId) {
+    document.getElementById(pageId).classList.remove('active');
+}
+
+function setupTabNavigation() {
+    const tabButtons = document.querySelectorAll('.tab-button');
+    tabButtons.forEach(button => {
+        button.addEventListener('click', () => {
+            const tabId = button.getAttribute('data-tab');
+            switchTab(tabId);
+        });
+    });
+}
+</script>
+
+</body>
+</html>
