@@ -1,0 +1,2150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BuildNest - Admin Dashboard</title>
+    <style>
+        :root {
+            --primary: #7C3AED;
+            --primary-dark: #6D28D9;
+            --secondary: #0EA5E9;
+            --accent: #F59E0B;
+            --accent-light: #FCD34D;
+            --dark: #000;
+            --gray: #212121;
+            --light: #F1F5F9;
+            --white: #FFFFFF;
+            --success: #10B981;
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            --transition: all 0.3s ease;
+        }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #e3f2fd 0%, #f3e5f5 50%, #fff3e0 100%);
+            color: #2d3748;
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+
+        /* Header */
+        .header {
+            background: var(--light);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+            padding: 1rem 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary);
+            margin: 20px;
+        }
+
+        .logo img{
+            width: 50px;
+            height: 50px;
+        }
+
+        .user-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .user-profile-dropdown {
+            position: relative;
+        }
+
+        .user-profile-trigger {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            cursor: pointer;
+            padding: 1.1rem;
+            border-radius: 12px;
+            transition: all 0.3s ease;
+            background:rgba(218, 182, 229, 0.1);
+            border: none;
+        }
+
+        .user-profile-trigger:hover {
+            background: rgba(128, 8, 164, 0.1);
+        }
+
+        .user-avatar {
+            width: 45px;
+            height: 45px;
+            background: var(--primary);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+            font-size: 1.1rem;
+        }
+
+        .user-info h3 {
+            font-size: 1rem;
+            color: white;
+            margin-bottom: 0.2rem;
+        }
+
+        .user-info p {
+            font-size: 0.85rem;
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        .dropdown-arrow {
+            color: var(--primary);
+            transition: transform 0.3s ease;
+        }
+
+        .user-profile-trigger.active .dropdown-arrow {
+            transform: rotate(180deg);
+        }
+
+        .profile-dropdown {
+            position: absolute;
+            top: 100%;
+            right: 0;
+            width: 350px;
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            border: 1px solid #e2e8f0;
+            padding: 1.5rem;
+            z-index: 1000;
+            display: none;
+            animation: slideDown 0.3s ease;
+        }
+
+        .profile-dropdown.active {
+            display: block;
+        }
+
+        .profile-dropdown-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .profile-dropdown-avatar {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, #1976d2, #7b1fa2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.5rem;
+            font-weight: 600;
+        }
+
+        .profile-dropdown-info h3 {
+            font-size: 1.1rem;
+            color: #2d3748;
+            margin-bottom: 0.25rem;
+        }
+
+        .profile-dropdown-info p {
+            font-size: 0.85rem;
+            color: #718096;
+            margin-bottom: 0.25rem;
+        }
+
+        .profile-details {
+            margin-bottom: 1rem;
+            padding: 1rem;
+            background: #f8fafc;
+            border-radius: 8px;
+        }
+
+        .profile-detail-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.5rem;
+            font-size: 0.85rem;
+        }
+
+        .profile-detail-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .profile-detail-label {
+            font-weight: 500;
+            color: #4a5568;
+        }
+
+        .profile-detail-value {
+            color: #718096;
+        }
+
+        .profile-dropdown-menu {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .profile-menu-item {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.75rem;
+            border-radius: 8px;
+            text-decoration: none;
+            color: #4a5568;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            border: none;
+            background: none;
+            width: 100%;
+            text-align: left;
+        }
+
+        .profile-menu-item:hover {
+            background: #f7fafc;
+            color: #1976d2;
+        }
+
+        .profile-menu-item.logout {
+            color: #e53e3e;
+            border-top: 1px solid #e2e8f0;
+            margin-top: 0.5rem;
+            padding-top: 1rem;
+        }
+
+        .profile-menu-item.logout:hover {
+            background: #fed7d7;
+        }
+
+        .admin-badge {
+            background: var(--primary);
+            color: white;
+            padding: 0.3rem 0.7rem;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            margin-left: 0.5rem;
+        }
+
+        .notifications {
+            position: relative;
+            background: rgba(255, 255, 255, 0.1);
+            border: none;
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            color: white;
+        }
+
+        .notifications:hover {
+            background: rgba(229, 177, 82, 0.2);
+        }
+
+        .notification-badge {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            background: #ff5722;
+            color: white;
+            font-size: 0.7rem;
+            padding: 0.2rem 0.4rem;
+            border-radius: 10px;
+            min-width: 18px;
+            text-align: center;
+        }
+
+        /* Navigation Tabs */
+        .nav-tabs {
+            background: white;
+            border-bottom: 2px solid #e2e8f0;
+            padding: 0;
+        }
+
+        .nav-tabs-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 2.5rem;
+            display: flex;
+            gap: 0;
+            overflow-x: auto;
+        }
+
+        .tab-button {
+            background: none;
+            border: none;
+            padding: 1.2rem 1.5rem;
+            font-size: 0.95rem;
+            font-weight: 500;
+            color: #718096;
+            cursor: pointer;
+            border-bottom: 3px solid transparent;
+            transition: all 0.3s ease;
+            position: relative;
+            white-space: nowrap;
+            margin: 5px;
+        }
+
+        .tab-button:hover {
+            color: #1976d2;
+            background: #f7fafc;
+        }
+
+        .tab-button.active {
+            color: #1976d2;
+            border-bottom-color: #1976d2;
+            background: #f7fafc;
+        }
+
+        /* Main Content */
+        .main-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+            min-height: calc(100vh - 200px);
+        }
+
+        .tab-content {
+            display: none;
+            animation: fadeIn 0.4s ease;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Card styles */
+        .card {
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 4px 25px rgba(0, 0, 0, 0.08);
+            padding: 2rem;
+            margin-bottom: 2rem;
+            border: 1px solid #e2e8f0;
+           max-width: 100%;
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .card-title {
+            font-size: 1.4rem;
+            font-weight: 600;
+            color: #2d3748;
+        }
+
+        /* Overview Tab */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+            margin-top: 1.5rem;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 1.8rem;
+            border-radius: 16px;
+            box-shadow: 0 4px 25px rgba(0, 0, 0, 0.08);
+            border-left: 4px solid;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 35px rgba(0, 0, 0, 0.12);
+        }
+
+        .stat-card:nth-child(1) { border-left-color: #1976d2; }
+        .stat-card:nth-child(2) { border-left-color: #7b1fa2; }
+        .stat-card:nth-child(3) { border-left-color: #ff9800; }
+        .stat-card:nth-child(4) { border-left-color: #4caf50; }
+
+        .stat-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .stat-title {
+            color: #718096;
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        .stat-icon {
+            width: 45px;
+            height: 45px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.3rem;
+        }
+
+        .stat-card:nth-child(1) .stat-icon {
+            background: linear-gradient(135deg, #1976d2, #1565c0);
+            color: white;
+        }
+
+        .stat-card:nth-child(2) .stat-icon {
+            background: linear-gradient(135deg, #7b1fa2, #6a1b9a);
+            color: white;
+        }
+
+        .stat-card:nth-child(3) .stat-icon {
+            background: linear-gradient(135deg, #ff9800, #f57c00);
+            color: white;
+        }
+
+        .stat-card:nth-child(4) .stat-icon {
+            background: linear-gradient(135deg, #4caf50, #388e3c);
+            color: white;
+        }
+
+        .stat-value {
+            font-size: 2.2rem;
+            font-weight: 700;
+            color: #2d3748;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-change {
+            font-size: 0.85rem;
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+        }
+
+        .stat-change.positive { color: #4caf50; }
+        .stat-change.negative { color: #f44336; }
+
+        /* Activity Items */
+        .activity-item {
+            background: white;
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+            box-shadow: 0 2px 15px rgba(0, 0, 0, 0.05);
+            border: 1px solid #e2e8f0;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .activity-item:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            border-color: #1976d2;
+        }
+
+        .activity-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .activity-project {
+            font-weight: 600;
+            color: #2d3748;
+        }
+
+        .activity-status {
+            padding: 0.4rem 0.8rem;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+
+        .status-pending {
+            background: #fff3e0;
+            color: #e65100;
+        }
+
+        .status-accepted {
+            background: #e8f5e8;
+            color: #2e7d32;
+        }
+
+        .status-rejected {
+            background: #ffebee;
+            color: #c62828;
+        }
+
+        .status-new {
+            background: #e3f2fd;
+            color: #1565c0;
+        }
+
+        .status-warning {
+            background: #fff3e0;
+            color: #f57c00;
+        }
+
+        .status-critical {
+            background: #ffebee;
+            color: #d32f2f;
+        }
+
+        /* Forms */
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            color: #2d3748;
+        }
+
+        .form-input,
+        .form-textarea,
+        .form-select {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 0.95rem;
+            transition: all 0.3s ease;
+        }
+
+        .form-input:focus,
+        .form-textarea:focus,
+        .form-select:focus {
+            outline: none;
+            border-color: #1976d2;
+            box-shadow: 0 0 0 3px rgba(25, 118, 210, 0.1);
+        }
+
+        .form-textarea {
+            resize: vertical;
+            min-height: 120px;
+        }
+
+        /* Buttons */
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 8px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.1s ease;
+            text-decoration: none;
+            display: inline-block;
+            text-align: center;
+            font-size: 0.95rem;
+            user-select: none;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            outline: none;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn:active {
+            transform: scale(0.98);
+        }
+
+        .btn:focus {
+            outline: 2px solid #1976d2;
+            outline-offset: 2px;
+        }
+
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none !important;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #1976d2, #1565c0);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(25, 118, 210, 0.3);
+        }
+
+        .btn-secondary {
+            background: #2758d4;
+            color: #f5f7fa;
+        }
+
+        .btn-secondary:hover {
+            background: #91b7e0;
+        }
+
+        .btn-success {
+            background: #4caf50;
+            color: white;
+        }
+
+        .btn-danger {
+            background: #f44336;
+            color: white;
+        }
+
+        .btn-warning {
+            background: #ff9800;
+            color: white;
+        }
+
+        .btn-orange {
+            background: linear-gradient(135deg, #ff9800, #f57c00);
+            color: white;
+        }
+
+        .btn-orange:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(255, 152, 0, 0.3);
+        }
+
+        /* Tables */
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1.5rem 0;
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+        }
+
+        .data-table th {
+            background: #f7fafc;
+            padding: 1rem;
+            text-align: left;
+            font-weight: 600;
+            color: #4a5568;
+            border-bottom: 2px solid #e2e8f0;
+        }
+
+        .data-table td {
+            padding: 1rem;
+            border-bottom: 1px solid #e2e8f0;
+            color: #4a5568;
+        }
+
+        .data-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .data-table tr:hover {
+            background: #f7fafc;
+        }
+
+        .table-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        /* User management */
+        .user-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin-top: 1.5rem;
+        }
+
+        .user-card {
+            background: white;
+            border-radius: 16px;
+            padding: 1.5rem;
+            box-shadow: 0 4px 25px rgba(0, 0, 0, 0.08);
+            border: 1px solid #e2e8f0;
+            transition: all 0.3s ease;
+        }
+
+        .user-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 35px rgba(0, 0, 0, 0.12);
+        }
+
+        .user-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .user-avatar-large {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, #1976d2, #7b1fa2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+            font-size: 1.2rem;
+        }
+
+        .user-info h3 {
+            color: #2d3748;
+            margin-bottom: 0.25rem;
+        }
+
+        .user-info p {
+            color: #718096;
+            font-size: 0.9rem;
+        }
+
+        .user-details {
+            margin-bottom: 1rem;
+            padding: 1rem;
+            background: #f8fafc;
+            border-radius: 8px;
+        }
+
+        .user-detail-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.5rem;
+            font-size: 0.85rem;
+            cursor: pointer;
+        }
+
+        .user-detail-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .user-detail-label {
+            font-weight: 500;
+            color: #4a5568;
+        }
+
+        .user-detail-value {
+            color: #718096;
+        }
+
+        .user-actions {
+            display: flex;
+            gap: 0.5rem;
+            justify-content: flex-end;
+        }
+
+        /* Content Moderation */
+        .moderation-item {
+            background: white;
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+            box-shadow: 0 2px 15px rgba(0, 0, 0, 0.05);
+            border: 1px solid #e2e8f0;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .moderation-item:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .moderation-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .moderation-title {
+            font-weight: 600;
+            color: #2d3748;
+            font-size: 1.1rem;
+        }
+
+        .moderation-meta {
+            font-size: 0.85rem;
+            color: #718096;
+        }
+
+        .moderation-content {
+            color: #4a5568;
+            line-height: 1.6;
+            margin-bottom: 1rem;
+        }
+
+        .moderation-actions {
+            display: flex;
+            gap: 0.75rem;
+        }
+
+                /* Footer */
+        footer {
+            background-color: var(--light);
+            color: var(--dark);
+            padding:1rem 2rem ;
+            margin: 0 auto;
+
+        }
+
+        .footer-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(20px, 1fr));
+            margin-bottom: 2rem;
+        }
+
+        .footer-column h3 {
+            color: var(--accent);
+            margin-bottom: 1.5rem;
+            font-size: 1.1rem;
+        }
+        .footer-column span h3 {
+            color: var(--primary);
+        }
+        .footer-p{
+            margin: 20px;
+        }
+
+        .footer-column ul {
+            list-style: none;
+        }
+
+        .footer-column ul li {
+            margin-bottom: 0.25rem;
+        }
+
+        .footer-column a {
+            color: var(--dark);
+            text-decoration: none;
+            transition: var(--transition);
+        }
+
+        .footer-column a:hover {
+            color: var(--accent-light);
+        }
+
+        .copyright {
+            width: 100%;
+            text-align: center;
+            padding-top: 0.5rem;
+            border-top: 1px solid #000;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .header-content {
+                padding: 0 1rem;
+            }
+
+            .nav-tabs-content {
+                padding: 0 1rem;
+            }
+
+            .tab-button {
+                padding: 1rem 1.2rem;
+            }
+
+            .main-content {
+                padding: 1rem;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .user-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .system-health-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .profile-dropdown {
+                width: 280px;
+                right: -20px;
+            }
+
+            .table-actions {
+                flex-direction: column;
+            }
+            
+            .moderation-actions {
+                flex-direction: column;
+            }
+        }
+
+        /* Animations */
+        @keyframes slideDown {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        /* Utility Classes */
+        .text-center { text-align: center; }
+        .mt-1 { margin-top: 0.5rem; }
+        .mt-2 { margin-top: 1rem; }
+        .mt-3 { margin-top: 1.5rem; }
+        .mb-1 { margin-bottom: 0.5rem; }
+        .mb-2 { margin-bottom: 1rem; }
+        .mb-3 { margin-bottom: 1.5rem; }
+        .p-2 { padding: 1rem; }
+        .p-3 { padding: 1.5rem; }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="header-content">
+            <div class="logo">
+                <img src="BN-logo.png">
+                <span>BuildNest Admin</span>
+            </div>
+            <div class="user-header">
+                <button class="notifications" id="notifications-btn">
+                    <i class="icon">🔔</i>
+                    <span class="notification-badge">5</span>
+                </button>
+                <div class="user-profile-dropdown">
+                    <button class="user-profile-trigger">
+                        <div class="user-avatar">AD</div>
+                        <div class="user-info">
+                            <h3>Admin</h3>
+                            <p>System Administrator</p>
+                        </div>
+                        <span class="dropdown-arrow">▼</span>
+                    </button>
+                    <div class="profile-dropdown">
+                        <div class="profile-dropdown-header">
+                            <div class="profile-dropdown-avatar">AD</div>
+                            <div class="profile-dropdown-info">
+                                <h3>Admin User</h3>
+                                <p>System Administrator</p>
+                               
+                            </div>
+                        </div>
+                        <div class="profile-details">
+                            <div class="profile-detail-item">
+                                <span class="profile-detail-label">Role:</span>
+                                <span class="profile-detail-value">Super Administrator</span>
+                            </div>
+                            <div class="profile-detail-item">
+                                <span class="profile-detail-label">Last Login:</span>
+                                <span class="profile-detail-value">Today, 09:42 AM</span>
+                            </div>
+                            <div class="profile-detail-item">
+                                <span class="profile-detail-label">Permissions:</span>
+                                <span class="profile-detail-value">Full Access</span>
+                            </div>
+                        </div>
+                        <div class="profile-dropdown-menu">
+                            <button class="profile-menu-item" id="view-profile-btn">
+                                <i class="icon">👤</i>
+                                <span>View Profile</span>
+                            </button>
+                            <button class="profile-menu-item" id="admin-settings-btn">
+                                <i class="icon">⚙️</i>
+                                <span>Admin Settings</span>
+                            </button>
+                            <button class="profile-menu-item logout">
+                                <i class="icon">🚪</i>
+                                <span>Logout</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Navigation Tabs -->
+    <nav class="nav-tabs">
+        <div class="nav-tabs-content">
+            <button class="tab-button active" data-tab="overview">Overview</button>
+            <button class="tab-button" data-tab="users">User Management</button>
+            <button class="tab-button" data-tab="moderation">Content Moderation</button>
+            <button class="tab-button" data-tab="settings">Admin Settings</button>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Overview Tab -->
+        <div class="tab-content active" id="overview">
+            <h1 class="card-title">Admin Dashboard Overview</h1>
+            <p class="mb-3">Welcome back, Admin. Here's what's happening with your platform today.</p>
+            
+            <div class="stats-grid">
+                <div class="stat-card" id="total-users-stat">
+                    <div class="stat-header">
+                        <h3 class="stat-title">Total Users</h3>
+                        <div class="stat-icon">👥</div>
+                    </div>
+                    <div class="stat-value"></div>
+                    <div class="stat-change positive">% from last week</div>
+                </div>
+                
+                <div class="stat-card" id="active-projects-stat">
+                    <div class="stat-header">
+                        <h3 class="stat-title">Active Projects</h3>
+                        <div class="stat-icon">📂</div>
+                    </div>
+                    <div class="stat-value"></div>
+                    <div class="stat-change positive">% from last week</div>
+                </div>
+                
+                <div class="stat-card" id="pending-moderation-stat">
+                    <div class="stat-header">
+                        <h3 class="stat-title">Pending Moderation</h3>
+                        <div class="stat-icon">⚠️</div>
+                    </div>
+                    <div class="stat-value"></div>
+                    <div class="stat-change negative">% from last week</div>
+                </div>
+                
+                <div class="stat-card" id="system-uptime-stat">
+                    <div class="stat-header">
+                        <h3 class="stat-title">System Uptime</h3>
+                        <div class="stat-icon">🖥️</div>
+                    </div>
+                    <div class="stat-value">%</div>
+                    <div class="stat-change">No issues detected</div>
+                </div>
+            </div>
+            
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title">Recent Activity</h2>
+                    <button class="btn btn-primary" id="view-all-activity-btn">View All</button>
+                </div>
+                
+                <div class="activity-item" id="activity-1">
+                    <div class="activity-header">
+                        <div class="activity-project">New user registration</div>
+                        <div class="activity-status status-new">NEW</div>
+                    </div>
+                    <p>John Doe registered as a new user. Account requires verification.</p>
+                    <div class="activity-meta">Today, 10:24 AM</div>
+                </div>
+                
+                <div class="activity-item" id="activity-2">
+                    <div class="activity-header">
+                        <div class="activity-project">Content Flagged</div>
+                        <div class="activity-status status-critical">CRITICAL</div>
+                    </div>
+                    <p>User reported inappropriate content in project "Urban Garden Design".</p>
+                    <div class="activity-meta">Yesterday, 11:32 PM</div>
+                </div>
+                
+                <div class="activity-item" id="activity-3">
+                    <div class="activity-header">
+                        <div class="activity-project">System Alert</div>
+                        <div class="activity-status status-warning">WARNING</div>
+                    </div>
+                    <p>CPU usage exceeded 80% on server-02. Monitoring required.</p>
+                    <div class="activity-meta">Today, 08:12 AM</div>
+                </div>
+                
+                <div class="activity-item" id="activity-4">
+                    <div class="activity-header">
+                        <div class="activity-project">Database Backup</div>
+                        <div class="activity-status status-accepted">COMPLETED</div>
+                    </div>
+                    <p>Nightly database backup completed successfully.</p>
+                    <div class="activity-meta">Today, 03:45 AM</div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- User Management Tab -->
+        <div class="tab-content" id="users">
+            <h1 class="card-title">User Management</h1>
+            <p class="mb-3">Manage all users, permissions, and access levels.</p>
+            
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title">All Users (2,548)</h2>
+                    <button class="btn btn-primary" id="add-new-user-btn">Add New User</button>
+                </div>
+                
+                <div class="user-grid">
+                    <div class="user-card" data-user-id="1">
+                        <div class="user-header">
+                            <div class="user-avatar-large">JD</div>
+                            <div class="user-info">
+                                <h3>John Doe</h3>
+                                <p>Architect</p>
+                            </div>
+                        </div>
+                        <div class="user-details">
+                            <div class="user-detail-item" data-action="view-profile">
+                                <span class="user-detail-label">Status:</span>
+                                <span class="user-detail-value">Active</span>
+                            </div>
+                            <div class="user-detail-item" data-action="view-projects">
+                                <span class="user-detail-label">Projects:</span>
+                                <span class="user-detail-value">12</span>
+                            </div>
+                            <div class="user-detail-item" data-action="view-activity">
+                                <span class="user-detail-label">Joined:</span>
+                                <span class="user-detail-value">2 days ago</span>
+                            </div>
+                        </div>
+                        <div class="user-actions">
+                            <button class="btn btn-primary user-edit-btn" data-user-id="1">Edit</button>
+                            <button class="btn user-view-btn" data-user-id="1">View</button>
+                        </div>
+                    </div>
+                    
+                    <div class="user-card" data-user-id="2">
+                        <div class="user-header">
+                            <div class="user-avatar-large">SJ</div>
+                            <div class="user-info">
+                                <h3>Sarah Johnson</h3>
+                                <p>Interior Designer</p>
+                            </div>
+                        </div>
+                        <div class="user-details">
+                            <div class="user-detail-item" data-action="view-profile">
+                                <span class="user-detail-label">Status:</span>
+                                <span class="user-detail-value">Active</span>
+                            </div>
+                            <div class="user-detail-item" data-action="view-projects">
+                                <span class="user-detail-label">Projects:</span>
+                                <span class="user-detail-value">8</span>
+                            </div>
+                            <div class="user-detail-item" data-action="view-activity">
+                                <span class="user-detail-label">Joined:</span>
+                                <span class="user-detail-value">1 week ago</span>
+                            </div>
+                        </div>
+                        <div class="user-actions">
+                            <button class="btn btn-primary user-edit-btn" data-user-id="2">Edit</button>
+                            <button class="btn user-view-btn" data-user-id="2">View</button>
+                        </div>
+                    </div>
+                    
+                    <div class="user-card" data-user-id="3">
+                        <div class="user-header">
+                            <div class="user-avatar-large">MR</div>
+                            <div class="user-info">
+                                <h3>Michael Rodriguez</h3>
+                                <p>Contractor</p>
+                            </div>
+                        </div>
+                        <div class="user-details">
+                            <div class="user-detail-item" data-action="view-profile">
+                                <span class="user-detail-label">Status:</span>
+                                <span class="user-detail-value">Pending</span>
+                            </div>
+                            <div class="user-detail-item" data-action="view-projects">
+                                <span class="user-detail-label">Projects:</span>
+                                <span class="user-detail-value">0</span>
+                            </div>
+                            <div class="user-detail-item" data-action="view-activity">
+                                <span class="user-detail-label">Joined:</span>
+                                <span class="user-detail-value">Today</span>
+                            </div>
+                        </div>
+                        <div class="user-actions">
+                            <button class="btn btn-primary user-edit-btn" data-user-id="3">Edit</button>
+                            <button class="btn user-view-btn" data-user-id="3">View</button>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="text-center mt-3">
+                    <button class="btn btn-primary" id="view-all-users-btn">View All Users</button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Content Moderation Tab -->
+        <div class="tab-content" id="moderation">
+            <h1 class="card-title">Content Moderation</h1>
+            <p class="mb-3">Review flagged content and user reports.</p>
+            
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title">Flagged Content (12)</h2>
+                    <button class="btn btn-primary" id="process-all-btn">Process All</button>
+                </div>
+                
+                <div class="moderation-item" data-content-id="101">
+                    <div class="moderation-header">
+                        <h3 class="moderation-title">Inappropriate Comment</h3>
+                        <div class="moderation-meta">Reported 2 hours ago</div>
+                    </div>
+                    <p class="moderation-content">User comment contains offensive language and personal attacks.</p>
+                    <div class="moderation-actions">
+                        <button class="btn btn-danger remove-content-btn" data-content-id="101">Remove Content</button>
+                        <button class="btn warn-user-btn" data-user-id="45">Warn User</button>
+                        <button class="btn dismiss-btn" data-content-id="101">Dismiss</button>
+                    </div>
+                </div>
+                
+                <div class="moderation-item" data-content-id="102">
+                    <div class="moderation-header">
+                        <h3 class="moderation-title">Copyright Concern</h3>
+                    <div class="moderation-meta">Reported 5 hours ago</div>
+                    </div>
+                    <p class="moderation-content">Project images may be using copyrighted material without permission.</p>
+                    <div class="moderation-actions">
+                        <button class="btn btn-warning temp-hide-btn" data-content-id="102">Temporarily Hide</button>
+                        <button class="btn contact-user-btn" data-user-id="32">Contact User</button>
+                        <button class="btn dismiss-btn" data-content-id="102">Dismiss</button>
+                    </div>
+                </div>
+                
+                <div class="moderation-item" data-content-id="103">
+                    <div class="moderation-header">
+                        <h3 class="moderation-title">Spam Account</h3>
+                        <div class="moderation-meta">Reported yesterday</div>
+                    </div>
+                    <p class="moderation-content">User account appears to be posting promotional content repeatedly.</p>
+                    <div class="moderation-actions">
+                        <button class="btn btn-danger suspend-account-btn" data-user-id="78">Suspend Account</button>
+                        <button class="btn investigate-btn" data-user-id="78">Investigate</button>
+                        <button class="btn dismiss-btn" data-content-id="103">Dismiss</button>
+                    </div>
+                </div>
+                
+                <div class="text-center mt-3">
+                    <button class="btn btn-primary" id="view-all-flagged-btn">View All Flagged Content</button>
+                </div>
+            </div>
+        </div>
+        <!-- Admin Settings Tab -->
+        <div class="tab-content" id="settings">
+            <h1 class="card-title">Admin Settings</h1>
+            <p class="mb-3">Configure platform settings and administrator preferences.</p>
+            
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title">Platform Configuration</h2>
+                </div>
+                
+                <form id="platform-config-form">
+                    <div class="form-group">
+                        <label class="form-label">Platform Name</label>
+                        <input type="text" class="form-input" value="BuildNest">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Default User Role</label>
+                        <select class="form-select">
+                            <option>Member</option>
+                            <option>Contributor</option>
+                            <option>Moderator</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">User Registration</label>
+                        <select class="form-select">
+                            <option>Open</option>
+                            <option>Invite Only</option>
+                            <option selected>Approval Required</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Notification Email</label>
+                        <input type="email" class="form-input" value="admin@buildnest.example">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">System Messages</label>
+                        <textarea class="form-textarea">Welcome to BuildNest! We're excited to have you as part of our community of design and construction professionals.</textarea>
+                    </div>
+                    
+                    <button type="submit" class="btn btn-primary">Save Settings</button>
+                </form>
+            </div>
+            
+            <div class="card mt-3">
+                <div class="card-header">
+                    <h2 class="card-title">Administrator Accounts</h2>
+                    <button class="btn btn-primary" id="add-admin-btn">Add Admin</button>
+                </div>
+                
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Email</th>
+                            <th>Role</th>
+                            <th>Last Active</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Admin User</td>
+                            <td>admin@buildnest.example</td>
+                            <td>Super Admin</td>
+                            <td>Today, 09:42 AM</td>
+                            <td class="table-actions">
+                                <button class="btn btn-primary">Edit</button>
+                                <button class="btn btn-danger">Remove</button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Sarah Johnson</td>
+                            <td>sarah@buildnest.example</td>
+                            <td>Content Moderator</td>
+                            <td>Yesterday, 03:15 PM</td>
+                            <td class="table-actions">
+                                <button class="btn btn-primary">Edit</button>
+                                <button class="btn btn-danger">Remove</button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Michael Rodriguez</td>
+                            <td>michael@buildnest.example</td>
+                            <td>User Manager</td>
+                            <td>Oct 15, 2023</td>
+                            <td class="table-actions">
+                                <button class="btn btn-primary">Edit</button>
+                                <button class="btn btn-danger">Remove</button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-column">
+                  <div class="logo">
+                <img src="BN-logo.png">
+                <span>BuildNest Admin</span></div>
+                <p class="footer-p">Where collaboration meets innovation.</p>
+                </div>
+                
+                <div class="footer-column">
+                    <h3>Resources</h3>
+                    <ul>
+                        <li><a href="community-guide.html">Community Guidelines</a></li>
+                        <li><a href="documentation.html">Documentation</a></li>
+                        <li><a href="terms-and-conditions.html">Terms and Conditions</a></li>
+                    </ul>
+                </div>
+            </div>
+                <div class="copyright">
+                <p>&copy; 2025 BuildNest. All rights reserved.</p>
+            </div>
+   
+    </footer>
+
+<!---- <script>
+        // Tab switching functionality
+        document.querySelectorAll('.tab-button').forEach(button => {
+            button.addEventListener('click', () => {
+                // Remove active class from all tabs and contents
+                document.querySelectorAll('.tab-button').forEach(btn => btn.classList.remove('active'));
+                document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+                
+                // Add active class to clicked tab
+                button.classList.add('active');
+                
+                // Show corresponding content
+                const tabId = button.getAttribute('data-tab');
+                document.getElementById(tabId).classList.add('active');
+            });
+        });
+
+        // Profile dropdown functionality
+        const profileTrigger = document.querySelector('.user-profile-trigger');
+        const profileDropdown = document.querySelector('.profile-dropdown');
+        
+        profileTrigger.addEventListener('click', (e) => {
+            e.stopPropagation();
+            profileTrigger.classList.toggle('active');
+            profileDropdown.classList.toggle('active');
+        });
+
+        // Close dropdown when clicking outside
+        document.addEventListener('click', (e) => {
+            if (!e.target.closest('.user-profile-dropdown')) {
+                profileTrigger.classList.remove('active');
+                profileDropdown.classList.remove('active');
+            }
+        });
+
+        // Notifications button
+        document.getElementById('notifications-btn').addEventListener('click', () => {
+            alert('Notifications panel would open here.');
+        });
+
+        // View profile button
+        document.getElementById('view-profile-btn').addEventListener('click', () => {
+            alert('Profile view would open here.');
+        });
+
+        // Admin settings button
+        document.getElementById('admin-settings-btn').addEventListener('click', () => {
+            // Switch to settings tab
+            document.querySelectorAll('.tab-button').forEach(btn => btn.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+            
+            document.querySelector('[data-tab="settings"]').classList.add('active');
+            document.getElementById('settings').classList.add('active');
+            
+            // Close dropdown
+            profileTrigger.classList.remove('active');
+            profileDropdown.classList.remove('active');
+        });
+
+        // Make all stat cards clickable
+        document.querySelectorAll('.stat-card').forEach(card => {
+            card.addEventListener('click', () => {
+                const cardId = card.id;
+                
+                if (cardId === 'total-users-stat') {
+                    // Switch to users tab
+                    document.querySelectorAll('.tab-button').forEach(btn => btn.classList.remove('active'));
+                    document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+                    
+                    document.querySelector('[data-tab="users"]').classList.add('active');
+                    document.getElementById('users').classList.add('active');
+                } else if (cardId === 'active-projects-stat') {
+                    alert('Would navigate to projects overview page.');
+                } else if (cardId === 'pending-moderation-stat') {
+                    // Switch to moderation tab
+                    document.querySelectorAll('.tab-button').forEach(btn => btn.classList.remove('active'));
+                    document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+                    
+                    document.querySelector('[data-tab="moderation"]').classList.add('active');
+                    document.getElementById('moderation').classList.add('active');
+                } else if (cardId === 'system-uptime-stat') {
+                    // Switch to system tab
+                    document.querySelectorAll('.tab-button').forEach(btn => btn.classList.remove('active'));
+                    document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+                    
+                    document.querySelector('[data-tab="system"]').classList.add('active');
+                    document.getElementById('system').classList.add('active');
+                }
+            });
+        });
+
+        // Make activity items clickable
+        document.querySelectorAll('.activity-item').forEach(item => {
+            item.addEventListener('click', () => {
+                const itemId = item.id;
+                
+                if (itemId === 'activity-1') {
+                    // Switch to users tab and focus on new users
+                    document.querySelectorAll('.tab-button').forEach(btn => btn.classList.remove('active'));
+                    document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+                    
+                    document.querySelector('[data-tab="users"]').classList.add('active');
+                    document.getElementById('users').classList.add('active');
+                    
+                    alert('Would filter users to show newly registered users.');
+                } else if (itemId === 'activity-2') {
+                    // Switch to moderation tab
+                    document.querySelectorAll('.tab-button').forEach(btn => btn.classList.remove('active'));
+                    document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+                    
+                    document.querySelector('[data-tab="moderation"]').classList.add('active');
+                    document.getElementById('moderation').classList.add('active');
+                } else if (itemId === 'activity-3') {
+                    // Switch to system tab
+                    document.querySelectorAll('.tab-button').forEach(btn => btn.classList.remove('active'));
+                    document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+                    
+                    document.querySelector('[data-tab="system"]').classList.add('active');
+                    document.getElementById('system').classList.add('active');
+                } else if (itemId === 'activity-4') {
+                    alert('Would show database backup details.');
+                }
+            });
+        });
+
+        // Make user detail items clickable
+        document.querySelectorAll('.user-detail-item').forEach(item => {
+            item.addEventListener('click', () => {
+                const action = item.getAttribute('data-action');
+                const userId = item.closest('.user-card').getAttribute('data-user-id');
+                
+                if (action === 'view-profile') {
+                    alert(`Would view profile for user ${userId}`);
+                } else if (action === 'view-projects') {
+                    alert(`Would view projects for user ${userId}`);
+                } else if (action === 'view-activity') {
+                    alert(`Would view activity for user ${userId}`);
+                }
+            });
+        });
+
+        // Make user action buttons clickable
+        document.querySelectorAll('.user-edit-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                e.stopPropagation(); // Prevent triggering the card click
+                const userId = btn.getAttribute('data-user-id');
+                alert(`Would edit user ${userId}`);
+            });
+        });
+
+        document.querySelectorAll('.user-view-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                e.stopPropagation(); // Prevent triggering the card click
+                const userId = btn.getAttribute('data-user-id');
+                alert(`Would view details for user ${userId}`);
+            });
+        });
+
+        // Make moderation action buttons clickable
+        document.querySelectorAll('.remove-content-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                e.stopPropagation(); // Prevent triggering the item click
+                const contentId = btn.getAttribute('data-content-id');
+                alert(`Would remove content ${contentId}`);
+            });
+        });
+
+        document.querySelectorAll('.warn-user-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                e.stopPropagation(); // Prevent triggering the item click
+                const userId = btn.getAttribute('data-user-id');
+                alert(`Would warn user ${userId}`);
+            });
+        });
+
+        document.querySelectorAll('.temp-hide-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                e.stopPropagation(); // Prevent triggering the item click
+                const contentId = btn.getAttribute('data-content-id');
+                alert(`Would temporarily hide content ${contentId}`);
+            });
+        });
+
+        document.querySelectorAll('.contact-user-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                e.stopPropagation(); // Prevent triggering the item click
+                const userId = btn.getAttribute('data-user-id');
+                alert(`Would contact user ${userId}`);
+            });
+        });
+
+        document.querySelectorAll('.suspend-account-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                e.stopPropagation(); // Prevent triggering the item click
+                const userId = btn.getAttribute('data-user-id');
+                alert(`Would suspend account ${userId}`);
+            });
+        });
+
+        document.querySelectorAll('.investigate-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                e.stopPropagation(); // Prevent triggering the item click
+                const userId = btn.getAttribute('data-user-id');
+                alert(`Would investigate user ${userId}`);
+            });
+        });
+
+        document.querySelectorAll('.dismiss-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                e.stopPropagation(); // Prevent triggering the item click
+                const contentId = btn.getAttribute('data-content-id');
+                alert(`Would dismiss report for content ${contentId}`);
+            });
+        });
+
+        // Make chart containers clickable
+        document.querySelectorAll('.chart-container').forEach(chart => {
+            chart.addEventListener('click', () => {
+                const chartId = chart.id;
+                
+                if (chartId === 'user-growth-chart') {
+                    alert('Would show detailed user growth analytics.');
+                } else if (chartId === 'project-categories-chart') {
+                    alert('Would show detailed project categories analytics.');
+                } else if (chartId === 'engagement-metrics-chart') {
+                    alert('Would show detailed engagement metrics analytics.');
+                }
+            });
+        });
+
+        // Make system cards clickable
+        document.querySelectorAll('.system-card').forEach(card => {
+            card.addEventListener('click', () => {
+                const cardId = card.id;
+                
+                if (cardId === 'web-server-card') {
+                    alert('Would show detailed web server metrics.');
+                } else if (cardId === 'database-card') {
+                    alert('Would show detailed database metrics.');
+                } else if (cardId === 'cache-server-card') {
+                    alert('Would show detailed cache server metrics.');
+                }
+            });
+        });
+
+        // Make metrics clickable
+        document.querySelectorAll('.metric').forEach(metric => {
+            metric.addEventListener('click', (e) => {
+                e.stopPropagation(); // Prevent triggering the card click
+                const metricType = metric.getAttribute('data-metric');
+                alert(`Would show detailed metrics for ${metricType}`);
+            });
+        });
+
+        // Make all other buttons clickable
+        document.querySelectorAll('#view-all-activity-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                alert('Would show all activity.');
+            });
+        });
+
+        document.querySelectorAll('#add-new-user-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                alert('Would open add new user form.');
+            });
+        });
+
+        document.querySelectorAll('#view-all-users-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                alert('Would show all users in a detailed list.');
+            });
+        });
+
+        document.querySelectorAll('#process-all-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                alert('Would process all flagged content.');
+            });
+        });
+
+        document.querySelectorAll('#view-all-flagged-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                alert('Would show all flagged content.');
+            });
+        });
+
+        document.querySelectorAll('.export-data-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                e.stopPropagation(); // Prevent triggering the chart click
+                alert('Would export data.');
+            });
+        });
+
+        document.querySelectorAll('.view-details-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                e.stopPropagation(); // Prevent triggering the chart click
+                alert('Would view details.');
+            });
+        });
+
+        document.querySelectorAll('.compare-periods-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                e.stopPropagation(); // Prevent triggering the chart click
+                alert('Would compare periods.');
+            });
+        });
+
+        document.querySelectorAll('#view-all-incidents-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                alert('Would show all incidents.');
+            });
+        });
+
+        document.querySelectorAll('#add-admin-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                alert('Would open add admin form.');
+            });
+        });
+
+        // Form submission
+        document.getElementById('platform-config-form').addEventListener('submit', (e) => {
+            e.preventDefault();
+            alert('Platform configuration saved successfully!');
+        });
+    </script>-->
+
+  <script>
+    // API configuration - IMPORTANT: Make sure this matches your backend URL
+    const API_BASE_URL = 'http://localhost:3000/api';
+    
+    // Utility function to show/hide loading states
+    const uiHelper = {
+        showLoading(element) {
+            const existingLoading = element.querySelector('.loading');
+            if (!existingLoading) {
+                element.innerHTML += '<div class="loading" style="text-align: center; padding: 20px;">Loading...</div>';
+            }
+        },
+        
+        hidePlaceholders() {
+            // Add data-static attribute to your static content elements
+            document.querySelectorAll('[data-static]').forEach(el => {
+                el.style.display = 'none';
+            });
+        },
+        
+        showError(message, element) {
+            element.innerHTML = `<div class="error" style="color: red; text-align: center; padding: 20px;">${message}</div>`;
+        }
+    };
+
+    // API service functions
+    const apiService = {
+        async makeRequest(endpoint, options = {}) {
+            try {
+                const url = `${API_BASE_URL}${endpoint}`;
+                console.log('🌐 Making API request to:', url);
+                
+                const response = await fetch(url, {
+                    headers: {
+                        'Content-Type': 'application/json',
+                        ...options.headers
+                    },
+                    ...options
+                });
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                
+                const data = await response.json();
+                console.log('✅ API response:', data);
+                return data;
+            } catch (error) {
+                console.error('❌ API request failed:', error);
+                console.log('🔧 Endpoint:', endpoint);
+                console.log('🔧 Full URL:', `${API_BASE_URL}${endpoint}`);
+                throw error;
+            }
+        },
+
+        async getUsers() {
+            return await this.makeRequest('/users');
+        },
+
+        async getUserById(userId) {
+            return await this.makeRequest(`/users/${userId}`);
+        },
+
+        async createUser(userData) {
+            return await this.makeRequest('/users', {
+                method: 'POST',
+                body: JSON.stringify(userData)
+            });
+        },
+
+        async getDashboardStats() {
+            return await this.makeRequest('/stats/dashboard');
+        },
+
+        async getFlaggedContent() {
+            return await this.makeRequest('/moderation/flagged');
+        },
+
+        async moderateContent(contentId, action) {
+            return await this.makeRequest(`/moderation/${contentId}`, {
+                method: 'POST',
+                body: JSON.stringify({ action })
+            });
+        },
+
+        async getRecentActivity() {
+            return await this.makeRequest('/activity/recent');
+        },
+
+        async healthCheck() {
+            return await this.makeRequest('/health');
+        }
+    };
+
+    // UI update functions
+    const uiUpdater = {
+        async updateDashboardStats() {
+            const statsContainer = document.querySelector('#overview');
+            
+            try {
+                console.log('📊 Loading dashboard stats...');
+                const response = await apiService.getDashboardStats();
+                const stats = response.data;
+                
+                console.log('✅ Stats loaded:', stats);
+                
+                // Update stats cards
+                document.querySelector('#total-users-stat .stat-value').textContent = stats.totalUsers.toLocaleString();
+                document.querySelector('#total-users-stat .stat-change').textContent = stats.userGrowth;
+                
+                document.querySelector('#active-projects-stat .stat-value').textContent = stats.activeProjects.toLocaleString();
+                document.querySelector('#active-projects-stat .stat-change').textContent = stats.projectGrowth;
+                
+                document.querySelector('#pending-moderation-stat .stat-value').textContent = stats.pendingModeration;
+                document.querySelector('#pending-moderation-stat .stat-change').textContent = stats.moderationGrowth;
+                
+                document.querySelector('#system-uptime-stat .stat-value').textContent = stats.systemUptime;
+                
+                // Show success indicator
+                this.showBackendStatus('✅ Connected to backend');
+                
+            } catch (error) {
+                console.error('Failed to load dashboard stats:', error);
+                this.showBackendStatus('❌ Backend connection failed - using demo data');
+                // Keep static content if API fails
+            }
+        },
+
+        async updateUsersList() {
+            const userGrid = document.querySelector('.user-grid');
+            
+            try {
+                console.log('👥 Loading users...');
+                const response = await apiService.getUsers();
+                const users = response.data;
+                
+                console.log('✅ Users loaded:', users);
+                
+                if (users && users.length > 0) {
+                    userGrid.innerHTML = users.map(user => `
+                        <div class="user-card" data-user-id="${user.id}">
+                            <div class="user-header">
+                                <div class="user-avatar-large">${user.initials || user.name.charAt(0)}</div>
+                                <div class="user-info">
+                                    <h3>${user.name}</h3>
+                                    <p>${user.role || 'User'}</p>
+                                </div>
+                            </div>
+                            <div class="user-details">
+                                <div class="user-detail-item" data-action="view-profile">
+                                    <span class="user-detail-label">Status:</span>
+                                    <span class="user-detail-value">${user.status || 'Active'}</span>
+                                </div>
+                                <div class="user-detail-item" data-action="view-projects">
+                                    <span class="user-detail-label">Projects:</span>
+                                    <span class="user-detail-value">${user.projects || 0}</span>
+                                </div>
+                                <div class="user-detail-item" data-action="view-activity">
+                                    <span class="user-detail-label">Joined:</span>
+                                    <span class="user-detail-value">${user.joinDate || 'Recently'}</span>
+                                </div>
+                            </div>
+                            <div class="user-actions">
+                                <button class="btn btn-primary user-edit-btn" data-user-id="${user.id}">Edit</button>
+                                <button class="btn user-view-btn" data-user-id="${user.id}">View</button>
+                            </div>
+                        </div>
+                    `).join('');
+                }
+                
+                // Update user count
+                const titleElement = document.querySelector('#users .card-title');
+                if (titleElement) {
+                    titleElement.textContent = `All Users (${users.length})`;
+                }
+                
+            } catch (error) {
+                console.error('Failed to load users:', error);
+                this.showBackendStatus('❌ Could not load users - showing demo data');
+            }
+        },
+
+        async updateRecentActivity() {
+            const activityContainer = document.querySelector('#overview .card');
+            
+            try {
+                console.log('📋 Loading recent activity...');
+                const response = await apiService.getRecentActivity();
+                const activities = response.data;
+                
+                console.log('✅ Activity loaded:', activities);
+                
+                if (activities && activities.length > 0) {
+                    // Find where to insert activities (after card header)
+                    const cardHeader = activityContainer.querySelector('.card-header');
+                    if (cardHeader) {
+                        // Remove existing activity items (keep the header and button)
+                        const existingActivities = activityContainer.querySelectorAll('.activity-item');
+                        existingActivities.forEach(activity => activity.remove());
+                        
+                        // Add new activities
+                        activities.forEach(activity => {
+                            const activityHTML = `
+                                <div class="activity-item" id="activity-${activity.id}">
+                                    <div class="activity-header">
+                                        <div class="activity-project">${activity.project}</div>
+                                        <div class="activity-status status-${activity.status}">${activity.status.toUpperCase()}</div>
+                                    </div>
+                                    <p>${activity.description}</p>
+                                    <div class="activity-meta">${activity.timestamp}</div>
+                                </div>
+                            `;
+                            cardHeader.insertAdjacentHTML('afterend', activityHTML);
+                        });
+                    }
+                }
+                
+            } catch (error) {
+                console.error('Failed to load recent activity:', error);
+            }
+        },
+
+        async updateFlaggedContent() {
+            const moderationContainer = document.querySelector('#moderation .card');
+            
+            try {
+                console.log('🚩 Loading flagged content...');
+                const response = await apiService.getFlaggedContent();
+                const flaggedContent = response.data;
+                
+                console.log('✅ Flagged content loaded:', flaggedContent);
+                
+                if (flaggedContent && flaggedContent.length > 0) {
+                    const contentHTML = flaggedContent.map(item => `
+                        <div class="moderation-item" data-content-id="${item.id}">
+                            <div class="moderation-header">
+                                <h3 class="moderation-title">${item.title}</h3>
+                                <div class="moderation-meta">Reported ${item.reportedTime}</div>
+                            </div>
+                            <p class="moderation-content">${item.description}</p>
+                            <div class="moderation-actions">
+                                <button class="btn btn-danger remove-content-btn" data-content-id="${item.id}">Remove Content</button>
+                                <button class="btn warn-user-btn" data-user-id="${item.userId}">Warn User</button>
+                                <button class="btn dismiss-btn" data-content-id="${item.id}">Dismiss</button>
+                            </div>
+                        </div>
+                    `).join('');
+                    
+                    moderationContainer.innerHTML = `
+                        <div class="card-header">
+                            <h2 class="card-title">Flagged Content (${flaggedContent.length})</h2>
+                            <button class="btn btn-primary" id="process-all-btn">Process All</button>
+                        </div>
+                        ${contentHTML}
+                        <div class="text-center mt-3">
+                            <button class="btn btn-primary" id="view-all-flagged-btn">View All Flagged Content</button>
+                        </div>
+                    `;
+                }
+                
+            } catch (error) {
+                console.error('Failed to load flagged content:', error);
+                this.showBackendStatus('❌ Could not load flagged content - showing demo data');
+            }
+        },
+
+        showBackendStatus(message) {
+            // Create or update status indicator
+            let statusElement = document.getElementById('backend-status');
+            if (!statusElement) {
+                statusElement = document.createElement('div');
+                statusElement.id = 'backend-status';
+                statusElement.style.cssText = 'position: fixed; top: 10px; right: 10px; background: #333; color: white; padding: 10px; border-radius: 5px; z-index: 10000; font-size: 12px;';
+                document.body.appendChild(statusElement);
+            }
+            statusElement.textContent = message;
+            
+            // Auto-hide after 5 seconds
+            setTimeout(() => {
+                statusElement.style.display = 'none';
+            }, 5000);
+        }
+    };
+
+    // Initialize the application
+    document.addEventListener('DOMContentLoaded', function() {
+        console.log('🚀 BuildNest Admin Dashboard Initialized');
+        
+        // Test backend connection
+        apiService.healthCheck()
+            .then(response => {
+                console.log('✅ Backend connection successful:', response);
+                uiUpdater.showBackendStatus('✅ Connected to backend');
+            })
+            .catch(error => {
+                console.error('❌ Backend connection failed:', error);
+                uiUpdater.showBackendStatus('❌ Backend not available - using demo data');
+            });
+        
+        // Load initial data for active tab
+        uiUpdater.updateDashboardStats();
+        uiUpdater.updateRecentActivity();
+        
+        // Tab change event listeners
+        document.querySelectorAll('.tab-button').forEach(button => {
+            button.addEventListener('click', () => {
+                const tabId = button.getAttribute('data-tab');
+                
+                setTimeout(() => {
+                    switch(tabId) {
+                        case 'users':
+                            uiUpdater.updateUsersList();
+                            break;
+                        case 'moderation':
+                            uiUpdater.updateFlaggedContent();
+                            break;
+                        case 'overview':
+                            uiUpdater.updateDashboardStats();
+                            uiUpdater.updateRecentActivity();
+                            break;
+                    }
+                }, 100);
+            });
+        });
+
+        // Enhanced button handlers
+        document.addEventListener('click', function(e) {
+            // User edit buttons
+            if (e.target.classList.contains('user-edit-btn')) {
+                e.stopPropagation();
+                const userId = e.target.getAttribute('data-user-id');
+                apiService.getUserById(userId)
+                    .then(response => {
+                        alert(`Editing user: ${response.data.name}`);
+                    })
+                    .catch(error => {
+                        alert('Failed to load user data');
+                    });
+            }
+            
+            // User view buttons
+            if (e.target.classList.contains('user-view-btn')) {
+                e.stopPropagation();
+                const userId = e.target.getAttribute('data-user-id');
+                apiService.getUserById(userId)
+                    .then(response => {
+                        alert(`Viewing details for: ${response.data.name}`);
+                    })
+                    .catch(error => {
+                        alert('Failed to load user details');
+                    });
+            }
+            
+            // Moderation actions
+            if (e.target.classList.contains('remove-content-btn')) {
+                e.stopPropagation();
+                const contentId = e.target.getAttribute('data-content-id');
+                apiService.moderateContent(contentId, 'remove')
+                    .then(response => {
+                        alert('Content removed successfully');
+                        uiUpdater.updateFlaggedContent();
+                    })
+                    .catch(error => {
+                        alert('Failed to remove content');
+                    });
+            }
+        });
+
+        // Add new user button
+        document.addEventListener('click', function(e) {
+            if (e.target.id === 'add-new-user-btn') {
+                const userName = prompt('Enter new user name:');
+                if (userName) {
+                    apiService.createUser({ name: userName, role: 'Member' })
+                        .then(response => {
+                            alert('User created successfully!');
+                            uiUpdater.updateUsersList();
+                        })
+                        .catch(error => {
+                            alert('Failed to create user');
+                        });
+                }
+            }
+        });
+
+        // Form submission
+        const configForm = document.getElementById('platform-config-form');
+        if (configForm) {
+            configForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                alert('Platform configuration would be saved to backend');
+            });
+        }
+
+        // Keep your existing UI functionality
+        initializeUI();
+    });
+
+    // Your existing UI functionality
+    function initializeUI() {
+        // Tab switching functionality
+        document.querySelectorAll('.tab-button').forEach(button => {
+            button.addEventListener('click', () => {
+                document.querySelectorAll('.tab-button').forEach(btn => btn.classList.remove('active'));
+                document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+                
+                button.classList.add('active');
+                const tabId = button.getAttribute('data-tab');
+                document.getElementById(tabId).classList.add('active');
+            });
+        });
+
+        // Profile dropdown functionality
+        const profileTrigger = document.querySelector('.user-profile-trigger');
+        const profileDropdown = document.querySelector('.profile-dropdown');
+        
+        if (profileTrigger && profileDropdown) {
+            profileTrigger.addEventListener('click', (e) => {
+                e.stopPropagation();
+                profileTrigger.classList.toggle('active');
+                profileDropdown.classList.toggle('active');
+            });
+
+            document.addEventListener('click', (e) => {
+                if (!e.target.closest('.user-profile-dropdown')) {
+                    profileTrigger.classList.remove('active');
+                    profileDropdown.classList.remove('active');
+                }
+            });
+        }
+    }
+</script>
+</body>
+</html>

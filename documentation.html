@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BuildNest Documentation</title>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #7B68EE;
+            --secondary: #5E43F3;
+            --accent: #FF6B6B;
+            --accent-light: #FF8E8E;
+            --dark: #2D2B55;
+            --light: #F7F9FF;
+            --gray: #6C757D;
+            --success: #4ECDC4;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+        
+        body {
+            color: var(--dark);
+            line-height: 1.6;
+            overflow-x: hidden;
+            background-color: var(--light);
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+        
+        header {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            color: white;
+            padding: 40px;
+            text-align: center;
+        }
+        
+        header h1 {
+            font-size: 2.8rem;
+            margin-bottom: 15px;
+        }
+        
+        header p {
+            font-size: 1.2rem;
+            max-width: 700px;
+            margin: 0 auto;
+            opacity: 0.9;
+        }
+        
+        .content {
+            display: flex;
+        }
+        
+        .sidebar {
+            width: 300px;
+            background: #f8f9ff;
+            padding: 30px 0;
+            border-right: 1px solid #eee;
+        }
+        
+        .sidebar ul {
+            list-style: none;
+            position: sticky;
+            top: 20px;
+        }
+        
+        .sidebar li {
+            margin-bottom: 5px;
+        }
+        
+        .sidebar a {
+            display: block;
+            padding: 12px 30px;
+            color: var(--dark);
+            text-decoration: none;
+            transition: all 0.3s;
+            font-weight: 500;
+        }
+        
+        .sidebar a:hover, .sidebar a.active {
+            background: rgba(123, 104, 238, 0.1);
+            color: var(--primary);
+            border-left: 4px solid var(--primary);
+        }
+        
+        .main-content {
+            flex: 1;
+            padding: 40px;
+        }
+        
+        .section {
+            margin-bottom: 60px;
+        }
+        
+        .section h2 {
+            font-size: 2rem;
+            margin-bottom: 20px;
+            color: var(--primary);
+            padding-bottom: 10px;
+            border-bottom: 2px solid #eee;
+        }
+        
+        .section h3 {
+            font-size: 1.5rem;
+            margin: 25px 0 15px;
+            color: var(--secondary);
+        }
+        
+        .card {
+            background: #f8f9ff;
+            border-radius: 10px;
+            padding: 25px;
+            margin-bottom: 25px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        }
+        
+        .card h4 {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+            color: var(--dark);
+        }
+        
+        .card h4 i {
+            margin-right: 10px;
+            color: var(--primary);
+        }
+        
+        ul.feature-list {
+            list-style: none;
+            padding-left: 10px;
+        }
+        
+        ul.feature-list li {
+            margin-bottom: 12px;
+            position: relative;
+            padding-left: 30px;
+        }
+        
+        ul.feature-list li:before {
+            content: "•";
+            color: var(--accent);
+            font-weight: bold;
+            position: absolute;
+            left: 0;
+            font-size: 1.5rem;
+        }
+        
+        .code-block {
+            background: #2D2B55;
+            color: #F7F9FF;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+            font-family: 'Courier New', monospace;
+            overflow-x: auto;
+        }
+        
+        .info-box {
+            background: #e6f7ff;
+            border-left: 4px solid #4ECDC4;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 0 8px 8px 0;
+        }
+        
+        footer {
+            text-align: center;
+            padding: 30px;
+            background: var(--dark);
+            color: white;
+        }
+        
+        @media (max-width: 900px) {
+            .content {
+                flex-direction: column;
+            }
+            
+            .sidebar {
+                width: 100%;
+                border-right: none;
+                border-bottom: 1px solid #eee;
+            }
+            
+            .sidebar ul {
+                position: relative;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1><i class="fas fa-book"></i> BuildNest Documentation</h1>
+            <p>Everything you need to know about building your tech portfolio through micro-internships and peer projects</p>
+        </header>
+        
+        <div class="content">
+            <div class="sidebar">
+                <a href="index.html" class="back-button"><i class="fas fa-arrow-left"></i> Back to Home</a>
+                <ul>
+                    <li><a href="#getting-started" class="active">Getting Started</a></li>
+                    <li><a href="#creating-profile">Creating Your Profile</a></li>
+                    <li><a href="#finding-projects">Finding Projects</a></li>
+                    <li><a href="#project-work">Working on Projects</a></li>
+                    <li><a href="#documenting-work">Documenting Your Work</a></li>
+                    <li><a href="#peer-reviews">Peer Reviews</a></li>
+                    <li><a href="#building-portfolio">Building Your Portfolio</a></li>
+                    <li><a href="#best-practices">Best Practices</a></li>
+                </ul>
+            </div>
+            
+            <div class="main-content">
+                
+                <div id="getting-started" class="section">
+                    <h2>Getting Started with BuildNest</h2>
+                    <p>Welcome to BuildNest! This documentation will help you make the most of our platform for building your tech portfolio through real-world projects.</p>
+                    
+                    <div class="card">
+                        <h4><i class="fas fa-rocket"></i> Onboarding Process</h4>
+                        <p>After signing up, you will be guided through a simple 3-step onboarding process:</p>
+                        <ul class="feature-list">
+                            <li><strong>Skill Assessment:</strong> Tell us about your current skill level and interests</li>
+                            <li><strong>Profile Setup:</strong> Create your professional profile</li>
+                            <li><strong>Goal Setting:</strong> Define what you want to achieve on BuildNest</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="card">
+                        <h4><i class="fas fa-cog"></i> Platform Overview</h4>
+                        <p>BuildNest is designed to help you build a verified portfolio through micro-internships and peer collaboration. Key areas of the platform include:</p>
+                        <ul class="feature-list">
+                            <li><strong>Project Marketplace:</strong> Browse available projects</li>
+                            <li><strong>Workspace:</strong> Where you collaborate and complete projects</li>
+                            <li><strong>Portfolio Builder:</strong> Showcase your completed work</li>
+                            <li><strong>Community Hub:</strong> Connect with other people</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div id="creating-profile" class="section">
+                    <h2>Creating Your Profile</h2>
+                    <p>Your profile is your professional home on BuildNest. A complete profile helps you find better projects and collaborators.</p>
+                    
+                    <div class="card">
+                        <h4><i class="fas fa-user"></i> Profile Components</h4>
+                        <p>A strong profile includes:</p>
+                        <ul class="feature-list">
+                            <li><strong>Professional Photo:</strong> Helps build trust with collaborators</li>
+                            <li><strong>Skills Matrix:</strong> Rate your proficiency in different technologies</li>
+                            <li><strong>Bio/Introduction:</strong> Share your background and goals</li>
+                            <li><strong>Learning Objectives:</strong> What you hope to achieve on the platform</li>
+                            <li><strong>Availability:</strong> How much time you can commit to projects</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="info-box">
+                        <p><strong>Pro Tip:</strong> Complete your profile to 100% to increase your visibility in search results and project applications by 40%.</p>
+                    </div>
+                </div>
+                
+                <div id="finding-projects" class="section">
+                    <h2>Finding and Applying to Projects</h2>
+                    <p>The project marketplace is where you will find opportunities to apply your skills and build your portfolio.</p>
+                    
+                    <div class="card">
+                        <h4><i class="fas fa-search"></i> Finding the Right Projects</h4>
+                        <p>Use our filtering system to find projects that match:</p>
+                        <ul class="feature-list">
+                            <li><strong>Skill Level:</strong> Beginner, Intermediate, or Advanced</li>
+                            <li><strong>Tech Fields:</strong> Filter opportunities based on your preferred role or area of focus within the industry.</li>
+                            <li><strong>Time Commitment:</strong> Projects ranging from 10 to 40 hours</li>
+                            <li><strong>Project Type:</strong> Solo, pair, or team projects</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="card">
+                        <h4><i class="fas fa-edit"></i> Applying to Projects</h4>
+                        <p>When applying for a project, you'll need to:</p>
+                        <ul class="feature-list">
+                            <li>Write a compelling application message</li>
+                            <li>Highlight relevant skills and experience</li>
+                            <li>Propose your approach to the project</li>
+                            <li>Estimate your timeline for completion</li>
+                        </ul>
+                    </div>
+                </div>
+                <div id="project-work" class="section">
+                    <h2>Working on Projects</h2>
+                    <p>Once you have joined a project, this section will guide you through the workflow for effective collaboration and project completion.</p>
+                    
+                    <div class="card">
+                        <h4><i class="fas fa-tasks"></i> Project Workflow</h4>
+                        <p>Follow these steps to ensure smooth project progress:</p>
+                        <ul class="feature-list">
+                            <li><strong>Task Assignment:</strong> Understand your responsibilities and deadlines</li>
+                            <li><strong>Collaboration Tools:</strong> Use the platform’s chat, file sharing, and task boards</li>
+                            <li><strong>Progress Updates:</strong> Regularly update your tasks and document progress</li>
+                            <li><strong>Review and Feedback:</strong> Share drafts for peer review before final submission</li>
+                            <li><strong>Final Delivery:</strong> Submit completed work along with documentation</li>
+                        </ul>
+                    </div>
+                    <div class="info-box">
+                        <p><strong>Pro Tip:</strong> Consistently document your progress and maintain clear communication with your team to avoid confusion and missed deadlines.</p>
+                    </div>
+                </div>
+                
+                <div id="documenting-work" class="section">
+                    <h2>Documenting Your Work</h2>
+                    <p>Documentation is at the heart of the BuildNest experience. It is what transforms projects into a compelling portfolio piece.</p>
+                    
+                    <div class="card">
+                        <h4><i class="fas fa-clipboard-list"></i> Reflection Framework</h4>
+                        <p>For each project, you will be guided to document:</p>
+                        <ul class="feature-list">
+                            <li><strong>The Problem:</strong> What challenge were you solving?</li>
+                            <li><strong>Your Approach:</strong> How did you plan to solve it?</li>
+                            <li><strong>Implementation:</strong> How did you execute your solution?</li>
+                            <li><strong>Challenges:</strong> What obstacles did you encounter?</li>
+                            <li><strong>Learnings:</strong> What did you learn from this project?</li>
+                            <li><strong>Future Improvements:</strong> What would you do differently next time?</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="card">
+                        <h4><i class="fas fa-users"></i> Collaboration Best Practices</h4>
+                        <p>We promote transparent and team-friendly workflows:</p>
+                        <ul class="feature-list">
+                            <li>Consistent documentation for code, design, and processes</li>
+                            <li>Shared decision logs for accountability</li>
+                            <li>Clear communication of tasks and responsibilities</li>
+                            <li>Guides or runbooks to support onboarding and handovers</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div id="peer-reviews" class="section">
+                    <h2>Giving and Receiving Peer Reviews</h2>
+                    <p>Peer reviews are essential for building credibility and improving your skills.</p>
+                    
+                    <div class="card">
+                        <h4><i class="fas fa-star"></i> Review Guidelines</h4>
+                        <p>When reviewing others' work, focus on:</p>
+                        <ul class="feature-list">
+                            <li><strong>Constructive Feedback:</strong> Be specific and helpful</li>
+                            <li><strong>Code Quality:</strong> Evaluate readability and efficiency</li>
+                            <li><strong>Documentation:</strong> Assess clarity and completeness</li>
+                            <li><strong>Problem-Solving:</strong> Comment on the approach and creativity</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="info-box">
+                        <p><strong>Remember:</strong> Reviews should be professional and respectful. Personal attacks or non-constructive criticism violate our community guidelines.</p>
+                    </div>
+                </div>
+                
+                <div id="building-portfolio" class="section">
+                    <h2>Building Your Portfolio</h2>
+                    <p>Your portfolio is the culmination of all your work on the platform.</p>
+                    
+                    <div class="card">
+                        <h4><i class="fas fa-briefcase"></i> Portfolio Features</h4>
+                        <p>Your portfolio automatically includes:</p>
+                        <ul class="feature-list">
+                            <li>All completed projects with your documentation</li>
+                            <li>Verified peer reviews and ratings</li>
+                            <li>Skill assessments based on completed work</li>
+                            <li>Collaboration history on team projects</li>
+                            <li>Customizable layout and presentation</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="card">
+                        <h4><i class="fas fa-book"></i> Documentation Standards</h4>
+                        <p>We encourage clear and consistent documentation across all roles:</p>
+                        <ul class="feature-list">
+                            <li>Comprehensive README or overview files with setup, usage, and purpose</li>
+                            <li>Clear in-code or workflow comments for complex logic, designs, or processes</li>
+                            <li>Architecture or design decision records for significant choices</li>
+                            <li>API, data model, or integration documentation if applicable</li>
+                            <li>User guides, test plans, and QA reports for quality assurance</li>
+                            <li>Design mockups or style guides for UI/UX clarity</li>
+                            <li>Deployment, monitoring, and operations runbooks for DevOps</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div id="best-practices" class="section">
+    <h2>Best Practices</h2>
+    <p>Following best practices ensures your work is high quality, consistent, and professional.</p>
+    
+    <div class="card">
+        <h4><i class="fas fa-lightbulb"></i> General Guidelines</h4>
+        <ul class="feature-list">
+            <li><strong>Consistency:</strong> Maintain a consistent structure, naming conventions, and formatting across all projects</li>
+            <li><strong>Documentation:</strong> Document your code, decisions, and workflows clearly</li>
+            <li><strong>Communication:</strong> Keep open and timely communication with collaborators and mentors</li>
+            <li><strong>Version Control:</strong> Use Git effectively, commit often, and write meaningful commit messages</li>
+            <li><strong>Testing:</strong> Verify your work with testing before submission or deployment</li>
+            <li><strong>Learning:</strong> Continuously reflect and improve your skills after each project</li>
+        </ul>
+    </div>
+    
+    <div class="info-box">
+        <p><strong>Pro Tip:</strong> Applying best practices consistently helps you build a credible portfolio and improves collaboration with your peers.</p>
+    </div>
+</div>
+
+            </div>
+        </div>
+        
+        <footer>
+            <p>BuildNest Documentation | © 2025 BuildNest. All rights reserved.</p>
+            <p>Need help? Contact our support team at support@buildnest.com</p>
+        </footer>
+    </div>
+
+    <script>
+        // Simple smooth scrolling for navigation
+        document.querySelectorAll('.sidebar a').forEach(anchor => {
+            anchor.addEventListener('click', function(e) {
+                const href = this.getAttribute('href');
+                //onlt prevent deafault for in-page anchor links
+                if (href.startsWith('#')) {
+                    e.preventDefault();
+                    const targetElement = document.querySelector(href);
+                    window.scrollTo({
+                        top: targetElement.offsetTop - 20,
+                        behavior: 'smooth'
+                    });
+                
+                // Update active class
+                document.querySelectorAll('.sidebar a').forEach(a => a.classList.remove('active'));
+                this.classList.add('active');
+                }
+            });
+        });
+    </script>
+</body>
+</html>
