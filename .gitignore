@@ -1,1 +1,24 @@
+
+# Dependencies
 node_modules/
+
+# Environment & Secrets
+.env
+serviceAccountKey.json
+buildnest-57551-firebase-adminsdk-*.json
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+*.log
+
+# Database dumps (optional)
+buildnest.sql
+setup-database.js
+
+# OS / Editor files
+.DS_Store
+Thumbs.db
+.vscode/
+
+
